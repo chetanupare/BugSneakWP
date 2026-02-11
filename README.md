@@ -1,6 +1,6 @@
 # BugSneak: Adaptive Crash Intelligence for WordPress
 
-![BugSneak Banner](https://raw.githubusercontent.com/chetanupare/BugSneak/main/.assets/banner.png)
+![BugSneak Banner](.assets/banner.png)
 
 > **Catch Fatal Errors, Exceptions, and Warnings with interactive diagnostics and optional AI-powered insights.**
 
