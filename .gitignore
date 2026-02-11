@@ -1,8 +1,24 @@
+# Development
 /node_modules/
 /vendor/
+composer.lock
+package-lock.json
+
+# System
 .DS_Store
-*.log
-.vscode/
+Thumbs.db
 .idea/
-.gemini/
-.agent/
+.vscode/
+*.log
+
+# Build
+/dist/
+*.zip
+
+# Local Environment
+.env
+.env.local
+wp-config.php
+
+# WP CLI
+*.sql

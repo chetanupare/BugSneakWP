@@ -3,7 +3,7 @@ Contributors: bugsneak
 Tags: debug, error log, stack trace, fatal error, php error
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 1.3.4
+Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,7 +30,8 @@ Inspired by modern crash intelligence tools, BugSneak uses **Pattern-Aware Error
 *   **Early Crash Capture:** Uses an MU (Must-Use) loader to catch errors that happen before normal plugins even load.
 *   **Production Safe:** Near-zero overhead during normal requests. Safely logs in the background without exposing errors to visitors.
 *   **Hybrid Intelligence (v1.3):** Features on-demand error analysis via Google Gemini or OpenAI ChatGPT to explain crashes and suggest fixes instantly. AI analysis is optional, user-initiated, and requires a valid API key. Error data is sent only when you explicitly request AI insights.
-*   **Error Classification Engine (v1.3.4):** Instantly recognizes common WordPress error patterns (e.g., Memory Exhaustion, Database Error) and provides immediate, rule-based suggestions without needing external AI.
+*   **Context-Aware Intelligence (v1.3.5):** Dynamic confidence scoring based on PHP/WP versions, request context, and detected environment signals.
+*   **Error Classification Engine:** Instantly recognizes common WordPress error patterns (e.g., Memory Exhaustion, Database Error) and provides immediate, rule-based suggestions without needing external AI.
 *   **Infrastructure Health:** Dedicated settings page with live health indicators and performance safety guards.
 
 == Privacy Notice ==
@@ -54,7 +55,7 @@ No data is transmitted automatically.
 No. Query Monitor is for performance and debugging tools (SQL, Hooks, etc.). BugSneak is for **Crash Intelligence**. It focuses 100% on understanding why your site died.
 
 = Will this slow down my site? =
-No. BugSneak only executes its heavy logic when an error occurs. During normal operation, it adds negligible overhead and only performs logging when an error occurs.
+No. BugSneak performs its heavier logic only when an error occurs. During normal operation, it adds negligible overhead.
 
 = Does it catch out-of-memory errors? =
 Yes. By using the registered shutdown handler and an MU loader, it catches most fatal exhaustion errors.
@@ -69,6 +70,13 @@ No. All logging is stored locally. External AI providers are only contacted when
 3. Dedicated settings page with System Health indicators.
 
 == Changelog ==
+
+= 1.3.5 =
+* Feature: Context-Aware Intelligence Engine. Dynamic confidence scoring based on PHP/WP version and request context.
+* Feature: Spike Detection. Detects rapid bursts of repeated errors to highlight abnormal crash patterns.
+* Feature: Culprit Fallback. Always-on intelligence panel even for unclassified errors.
+* Improvement: Expanded regex patterns for higher precision error classification.
+* Fix: BUGSNEAK_VERSION constant alignment.
 
 = 1.3.4 =
 * Feature: Layer 2 Error Classification Engine. Instantly categorizes errors with actionable suggestions.

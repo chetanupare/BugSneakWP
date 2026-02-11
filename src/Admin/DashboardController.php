@@ -105,20 +105,25 @@ class DashboardController {
 		wp_enqueue_style( 'bugsneak-dashboard-css', BUGSNEAK_URL . 'assets/dashboard.css', [], BUGSNEAK_VERSION );
 
 		if ( $is_dashboard ) {
-			wp_enqueue_script( 'bugsneak-dashboard-app', BUGSNEAK_URL . 'assets/dashboard.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION, true );
+			wp_enqueue_script( 'bugsneak-dashboard-app', BUGSNEAK_URL . 'assets/dashboard.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION . '.' . time(), true );
 			wp_localize_script(
 				'bugsneak-dashboard-app',
 				'bugsneakData',
 				[
 					'root'        => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
-					'logs'        => array_map( function( $log ) {
-						$log['classification'] = \BugSneak\Intelligence\ErrorClassifier::classify( $log['error_message'] );
-						
+					'logs'        => array_map( function( $log ) use ( $is_dashboard ) {
 						// Spike Detection (Velocity Check)
 						$duration = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
 						$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : ( $log['occurrence_count'] > 1 ? 999 : 0 );
-						$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 ); // >10 errors and >5/min
+						$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 );
+
+						// Build Context for Intelligence Engine
+						$context = \BugSneak\Intelligence\ContextBuilder::build();
+						$context['culprit']  = $log['culprit'];
+						$context['is_spike'] = $log['is_spike'];
+
+						$log['classification'] = \BugSneak\Intelligence\ErrorClassifier::classify( $log['error_message'], $context );
 
 						return $log;
 					}, \BugSneak\Database\Schema::get_logs( 50 ) ),
@@ -179,17 +184,20 @@ class DashboardController {
 		?>
 		<style>
 			/* Lock global viewport to prevent "drifting" into white space */
-			html, body, #wpwrapper { height: 100vh !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important; }
+			html, body { height: 100vh !important; overflow: hidden !important; }
+			#wpwrapper { height: 100vh !important; overflow: hidden !important; }
 			
 			/* Ensure the content area fills the remaining viewport */
 			#wpcontent { 
 				padding: 0 !important; 
 				height: calc(100vh - 32px) !important; /* Default WP Admin Bar height */
 				box-sizing: border-box; 
+				overflow: hidden !important; /* Ensure no double scrollbars */
 			}
 
 			/* Handle responsive admin bar height (46px on mobile/small screens) */
 			@media screen and (max-width: 782px) {
+				html { margin-top: 46px !important; }
 				#wpcontent { height: calc(100vh - 46px) !important; }
 			}
 

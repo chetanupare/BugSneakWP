@@ -3,14 +3,14 @@
  * Plugin Name: BugSneak
  * Plugin URI:  https://bugsneak.com
  * Description: Crash Intelligence System — intercepts PHP Fatal Errors, Exceptions, and Warnings with beautiful diagnostics.
- * Version:     1.3.4
+ * Version:     1.3.5
  * Author:      BugSneak Team
  * Author URI:  https://bugsneak.com
  * License:     GPLv2 or later
  * Text Domain: bugsneak
  * Domain Path: /languages
  * Requires at least: 6.2
- * Stable tag: 1.3.3
+ * Stable tag: 1.3.5
  *
  * @package BugSneak
  */
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define constants.
-define( 'BUGSNEAK_VERSION', '1.2.0' );
+define( 'BUGSNEAK_VERSION', '1.3.5' );
 define( 'BUGSNEAK_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BUGSNEAK_URL', plugin_dir_url( __FILE__ ) );
 

@@ -42,10 +42,13 @@ $bs_severity = $data['severity'] ?? 'Fatal';
     <?php
     $nav_logo = defined('BUGSNEAK_URL') ? BUGSNEAK_URL . 'logo-text-new.svg' : '';
     
-    // Run Classification (Layer 2)
+    // Run Classification (Layer 2) with Context Intelligence
     $classification = [ 'category' => 'Unclassified', 'suggestion' => 'Review stack trace for details.', 'severity' => 'unknown' ];
     if ( class_exists( '\BugSneak\Intelligence\ErrorClassifier' ) ) {
-        $classification = \BugSneak\Intelligence\ErrorClassifier::classify( $data['message'] );
+        $context = \BugSneak\Intelligence\ContextBuilder::build();
+        $context['culprit'] = $data['culprit'] ?? null;
+        
+        $classification = \BugSneak\Intelligence\ErrorClassifier::classify( $data['message'], $context );
     }
     ?>
 

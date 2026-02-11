@@ -23,6 +23,19 @@ const THEMES = {
         '--tl-badge-fatal-border': 'rgba(239,68,68,0.2)',
         '--tl-badge-warn-bg': 'rgba(245,158,11,0.15)', '--tl-badge-warn-text': '#fcd34d',
         '--tl-badge-warn-border': 'rgba(245,158,11,0.2)',
+
+        // Critical / High (Red/Orange)
+        '--tl-card-critical-bg': 'rgba(239,68,68,0.1)', '--tl-card-critical-border': 'rgba(239,68,68,0.2)', '--tl-card-critical-text': '#fca5a5',
+        '--tl-card-high-bg': 'rgba(249,115,22,0.1)', '--tl-card-high-border': 'rgba(249,115,22,0.2)', '--tl-card-high-text': '#fdba74',
+
+        // Medium (Amber)
+        '--tl-card-medium-bg': 'rgba(245,158,11,0.1)', '--tl-card-medium-border': 'rgba(245,158,11,0.2)', '--tl-card-medium-text': '#fcd34d',
+
+        // Low / Info (Blue)
+        '--tl-card-low-bg': 'rgba(59,130,246,0.1)', '--tl-card-low-border': 'rgba(59,130,246,0.2)', '--tl-card-low-text': '#93c5fd',
+
+        // Unknown (Slate)
+        '--tl-card-unknown-bg': 'rgba(148,163,184,0.1)', '--tl-card-unknown-border': 'rgba(148,163,184,0.2)', '--tl-card-unknown-text': '#cbd5e1',
     },
     light: {
         '--tl-bg': '#f8fafc', '--tl-surface': '#ffffff', '--tl-surface-hover': '#f1f5f9',
@@ -38,6 +51,19 @@ const THEMES = {
         '--tl-code-text': '#cbd5e1', '--tl-code-line-num': '#64748b', '--tl-input-bg': '#f1f5f9',
         '--tl-badge-fatal-bg': '#fef2f2', '--tl-badge-fatal-text': '#dc2626', '--tl-badge-fatal-border': '#fecaca',
         '--tl-badge-warn-bg': '#fffbeb', '--tl-badge-warn-text': '#d97706', '--tl-badge-warn-border': '#fde68a',
+
+        // Critical / High (Red/Orange)
+        '--tl-card-critical-bg': '#fef2f2', '--tl-card-critical-border': '#fecaca', '--tl-card-critical-text': '#b91c1c',
+        '--tl-card-high-bg': '#fff7ed', '--tl-card-high-border': '#fed7aa', '--tl-card-high-text': '#c2410c',
+
+        // Medium (Amber)
+        '--tl-card-medium-bg': '#fffbeb', '--tl-card-medium-border': '#fde68a', '--tl-card-medium-text': '#b45309',
+
+        // Low / Info (Blue)
+        '--tl-card-low-bg': '#eff6ff', '--tl-card-low-border': '#bfdbfe', '--tl-card-low-text': '#1d4ed8',
+
+        // Unknown (Slate)
+        '--tl-card-unknown-bg': '#f8fafc', '--tl-card-unknown-border': '#e2e8f0', '--tl-card-unknown-text': '#475569',
     }
 };
 
@@ -45,7 +71,10 @@ const THEMES = {
 
 const App = () => {
     const [logs, setLogs] = useState(window.bugsneakData?.logs || []);
-    const [activeLog, setActiveLog] = useState(logs.length > 0 ? logs[0] : null);
+    const [activeLog, setActiveLog] = useState(() => {
+        const list = window.bugsneakData?.logs || [];
+        return list.find(l => !l.status || l.status === 'open') || (list.length > 0 ? null : null);
+    });
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState('all');
     const [loading, setLoading] = useState(false);
@@ -56,17 +85,38 @@ const App = () => {
     const env = window.bugsneakData?.env || {};
     const settingsUrl = window.bugsneakData?.settingsUrl || '#';
 
+    // Responsive viewport calculation
+    const [viewportHeight, setViewportHeight] = useState('100vh');
+
     useEffect(() => { localStorage.setItem('bugsneak_theme', isDark ? 'dark' : 'light'); }, [isDark]);
+
+    useEffect(() => {
+        const updateHeight = () => {
+            const adminBar = document.getElementById('wpadminbar');
+            const barHeight = adminBar ? adminBar.offsetHeight : 0;
+            // Subtract barHeight to fit exactly below it
+            setViewportHeight(`${window.innerHeight - barHeight}px`);
+        };
+
+        updateHeight();
+        window.addEventListener('resize', updateHeight);
+        return () => window.removeEventListener('resize', updateHeight);
+    }, []);
 
     const filteredLogs = useMemo(() => {
         return logs.filter(log => {
             if (log.status && log.status !== 'open') return false;
-            const m = log.error_message.toLowerCase().includes(search.toLowerCase()) ||
-                log.file_path.toLowerCase().includes(search.toLowerCase()) ||
-                log.culprit.toLowerCase().includes(search.toLowerCase());
+            const term = search.toLowerCase();
+            const msg = (log.error_message || '').toLowerCase();
+            const file = (log.file_path || '').toLowerCase();
+            const culprit = (log.culprit || '').toLowerCase();
+            const type = (log.error_type || '').toLowerCase();
+
+            const m = msg.includes(term) || file.includes(term) || culprit.includes(term);
+
             if (filter === 'all') return m;
-            if (filter === 'fatal') return m && log.error_type.toLowerCase().includes('fatal');
-            if (filter === 'warning') return m && log.error_type.toLowerCase().includes('warning');
+            if (filter === 'fatal') return m && type.includes('fatal');
+            if (filter === 'warning') return m && type.includes('warning');
             return m;
         });
     }, [logs, search, filter]);
@@ -88,18 +138,21 @@ const App = () => {
         try {
             const data = await apiFetch({ path: '/bugsneak/v1/logs' });
             setLogs(data);
-            if (!activeLog && data.length > 0) setActiveLog(data.find(l => l.status === 'open') || data[0]);
+            if (!activeLog && data.length > 0) setActiveLog(data.find(l => !l.status || l.status === 'open') || null);
         } catch (err) { console.error('Failed to fetch logs', err); }
         finally { setLoading(false); }
     };
 
     const themeVars = isDark ? THEMES.dark : THEMES.light;
 
-    return el('div', { className: 'font-display h-full flex flex-col overflow-hidden', style: themeVars }, [
+    return el('div', {
+        className: 'font-display flex flex-col overflow-hidden',
+        style: { ...themeVars, height: viewportHeight }
+    }, [
         el(Header, { search, setSearch, loading, onRefresh: refreshLogs, isDark, toggleTheme: () => setIsDark(!isDark), settingsUrl }),
         el('div', { className: 'flex flex-1 overflow-hidden' }, [
             el(Aside, { logs: filteredLogs, activeLog, setActiveLog, filter, setFilter }),
-            el(Main, { activeLog, env, setLogStatus })
+            el(Main, { activeLog, env, setLogStatus, isDark })
         ])
     ]);
 };
@@ -259,24 +312,7 @@ const Main = ({ activeLog, env, setLogStatus }) => {
         ]),
         el('div', { className: 'flex-1 overflow-auto p-6 custom-scrollbar' }, [
             activeTab === 'stack' && el('div', { className: 'space-y-4' }, [
-                el(ClassificationCard, { classification: activeLog.classification, isSpike: activeLog.is_spike }),
-                el('div', { className: `bg-[var(--tl-primary-bg)] border border-[var(--tl-primary-border)] rounded-lg p-4 flex items-start gap-3 transition-all ${aiLoading ? 'animate-pulse' : ''}` }, [
-                    el('div', { className: 'shrink-0 p-1.5 bg-[var(--tl-primary-bg)] rounded-lg' }, el('span', { className: 'material-icons text-[var(--tl-primary-light)] text-xl' }, 'auto_fix_high')),
-                    el('div', { className: 'flex-1 min-w-0' }, [
-                        el('div', { className: 'flex items-center justify-between mb-1' }, [
-                            el('h3', { className: 'text-[11px] font-bold text-[var(--tl-primary-light)] uppercase tracking-wider' }, currentAiInsight ? `BugSneak AI Insight (${aiProvider})` : 'BugSneak AI Insight'),
-                            aiEnabled && !currentAiInsight && el('button', { onClick: runAIAnalysis, disabled: aiLoading, className: 'px-2 py-0.5 bg-[var(--tl-primary)] text-white text-[9px] font-bold rounded uppercase tracking-tighter hover:opacity-90 disabled:opacity-50 transition-opacity' }, aiLoading ? 'Analyzing...' : 'Deep Dive Analysis')
-                        ]),
-                        el(MarkdownContent, {
-                            content: currentAiInsight ? currentAiInsight.text : '',
-                            error: currentAiInsight?.error,
-                            fallback: [
-                                'Error from ', el('code', { className: 'bg-[var(--tl-primary-bg)] px-1.5 py-0.5 rounded text-[var(--tl-primary-light)] font-bold text-[12px]' }, activeLog.culprit),
-                                '. Full context captured via v1.2 Engine.'
-                            ]
-                        })
-                    ])
-                ]),
+                el(IntelligencePanel, { activeLog, aiResult, aiLoading, runAIAnalysis, aiEnabled, aiProvider }),
                 el('div', { className: 'bg-[var(--tl-code-bg)] rounded-lg border border-[var(--tl-border)] flex flex-col overflow-hidden' }, [
                     el('div', { className: 'h-8 bg-[var(--tl-code-header)] border-b border-[var(--tl-border)] flex items-center px-4 justify-between shrink-0' }, [
                         el('div', { className: 'flex items-center gap-1.5' }, [
@@ -348,11 +384,11 @@ const EnvironmentPanel = ({ env, activeLog }) => (
     ])
 );
 
-const MarkdownContent = ({ content, error, fallback }) => {
+const MarkdownContent = ({ content, error, fallback, isDark }) => {
     if (!content) return el('div', { className: 'text-[13px] text-[var(--tl-text-body)] leading-relaxed' }, fallback);
     const html = window.marked ? window.marked.parse(content) : content;
     return el('div', {
-        className: `prose prose-sm prose-invert max-w-none text-[13px] leading-relaxed ${error ? 'text-[var(--tl-danger)] font-medium p-3 bg-red-500/5 rounded-lg border border-red-500/20' : 'text-[var(--tl-text-body)]'}`,
+        className: `prose prose-sm max-w-none text-[13px] leading-relaxed ${isDark ? 'prose-invert' : ''} ${error ? 'text-[var(--tl-danger)] font-medium p-3 bg-red-500/5 rounded-lg border border-red-500/20' : 'text-[var(--tl-text-body)]'}`,
         dangerouslySetInnerHTML: { __html: html }
     });
 };
@@ -383,44 +419,112 @@ const highlightLine = (c) => {
     });
 };
 
-const ClassificationCard = ({ classification, isSpike }) => {
-    if (!classification || !classification.category || classification.category === 'Unclassified') return null;
+const IntelligencePanel = ({ activeLog, aiResult, aiLoading, runAIAnalysis, aiEnabled, aiProvider, isDark }) => {
+    let classification = activeLog.classification;
+    // Safety: Parse if string (common WP REST API quirk)
+    if (typeof classification === 'string') {
+        try { classification = JSON.parse(classification); } catch (e) { classification = null; }
+    }
 
-    const colors = {
-        'critical': 'border-l-4 border-red-500 bg-red-500/5 text-red-500',
-        'high': 'border-l-4 border-orange-500 bg-orange-500/5 text-orange-600',
-        'medium': 'border-l-4 border-yellow-500 bg-yellow-500/5 text-yellow-600',
-        'low': 'border-l-4 border-blue-500 bg-blue-500/5 text-blue-600',
-        'unknown': 'border-l-4 border-gray-400 bg-gray-100 text-gray-500'
+    const currentAiInsight = aiResult[activeLog.id];
+    const isSpike = activeLog.is_spike;
+
+    // Determine styles based on classification, defaulting to 'unknown' if missing
+    const severityMap = {
+        'critical': { bg: 'var(--tl-card-critical-bg)', border: 'var(--tl-card-critical-border)', text: 'var(--tl-card-critical-text)' },
+        'high': { bg: 'var(--tl-card-high-bg)', border: 'var(--tl-card-high-border)', text: 'var(--tl-card-high-text)' },
+        'medium': { bg: 'var(--tl-card-medium-bg)', border: 'var(--tl-card-medium-border)', text: 'var(--tl-card-medium-text)' },
+        'low': { bg: 'var(--tl-card-low-bg)', border: 'var(--tl-card-low-border)', text: 'var(--tl-card-low-text)' },
+        'unknown': { bg: 'var(--tl-card-unknown-bg)', border: 'var(--tl-card-unknown-border)', text: 'var(--tl-card-unknown-text)' }
     };
 
-    const theme = colors[classification.severity] || colors['unknown'];
-    const confidence = classification.confidence || 0;
+    const hasClassification = classification && classification.category && classification.category !== 'Unclassified';
+    const s = hasClassification ? (severityMap[classification.severity] || severityMap['unknown']) : severityMap['unknown'];
+    const confidence = classification?.confidence || 0;
 
-    let confidenceBadge = { text: 'Low Confidence', color: 'bg-gray-100 text-gray-500' };
-    if (confidence >= 90) confidenceBadge = { text: 'High Confidence', color: 'bg-green-100 text-green-700' };
-    else if (confidence >= 70) confidenceBadge = { text: 'Medium Confidence', color: 'bg-blue-100 text-blue-700' };
+    let confidenceBadge = { text: 'Low Confidence', className: 'text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' };
+    if (confidence >= 90) confidenceBadge = { text: 'High Confidence', className: 'text-emerald-500 bg-emerald-500/10' };
+    else if (confidence >= 70) confidenceBadge = { text: 'Medium Confidence', className: 'text-amber-500 bg-amber-500/10' };
 
-    return el('div', { className: 'mb-4 space-y-2' }, [
-        isSpike && el('div', { className: 'flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg border border-red-200 animate-pulse' }, [
-            el('span', { className: 'material-icons' }, 'local_fire_department'),
+    return el('div', { className: 'space-y-3 mb-4' }, [
+        // Spike Warning
+        isSpike && el('div', { className: 'flex items-center gap-2 p-2.5 bg-[var(--tl-danger-bg)] text-[var(--tl-danger-text)] rounded-lg border border-[var(--tl-badge-fatal-border)] animate-pulse' }, [
+            el('span', { className: 'material-icons text-[18px]' }, 'local_fire_department'),
             el('div', null, [
-                el('strong', { className: 'block text-xs uppercase tracking-wider' }, 'Abnormal Spike Detected'),
-                el('span', { className: 'text-xs' }, 'Error rate allows this to be classified as a spike.')
+                el('strong', { className: 'block text-[11px] uppercase tracking-wider' }, 'Abnormal Spike Detected'),
+                el('span', { className: 'text-[11px]' }, 'Error rate allows this to be classified as a spike.')
             ])
         ]),
-        el('div', { className: `rounded-r-lg p-4 ${theme}` }, [
-            el('div', { className: 'flex items-center justify-between mb-2' }, [
-                el('div', { className: 'flex items-center gap-2' }, [
-                    el('span', { className: 'material-icons text-[18px]' }, 'lightbulb'),
-                    el('h3', { className: 'text-[11px] font-bold uppercase tracking-wider' }, classification.category)
+
+        // Unified Intelligence Card
+        el('div', {
+            className: 'rounded-lg border relative overflow-hidden transition-all',
+            style: { backgroundColor: s.bg, borderColor: s.border }
+        }, [
+            // Header (Local Intelligence or Culprit Fallback)
+            (hasClassification || activeLog.culprit) && el('div', { className: 'px-3 py-2.5 border-b border-[rgba(0,0,0,0.05)]' }, [
+                el('div', { className: 'flex items-center justify-between mb-2 relative z-10' }, [
+                    el('div', { className: 'flex items-center gap-2' }, [
+                        el('div', {
+                            className: 'w-6 h-6 rounded-full flex items-center justify-center',
+                            style: { backgroundColor: s.border, color: s.text }
+                        }, el('span', { className: 'material-icons text-[14px]' }, hasClassification ? 'lightbulb' : 'extension')),
+                        el('h3', {
+                            className: 'text-[11px] font-bold uppercase tracking-wider',
+                            style: { color: s.text }
+                        }, hasClassification ? classification.category : (activeLog.culprit ? activeLog.culprit.split(':').pop().trim() : 'Unknown Source'))
+                    ]),
+                    hasClassification
+                        ? el('span', { className: `px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${confidenceBadge.className}` }, confidenceBadge.text)
+                        : el('span', { className: 'px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' }, activeLog.culprit ? activeLog.culprit.split(':')[0] : 'System')
                 ]),
-                el('span', { className: `px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${confidenceBadge.color}` }, confidenceBadge.text)
+                el('p', { className: 'text-[12px] font-medium leading-relaxed mb-2', style: { color: 'var(--tl-text)' } },
+                    hasClassification ? classification.suggestion : `Error originated from ${activeLog.culprit || 'an unknown source'}.`
+                ),
+                hasClassification && el('div', { className: 'flex flex-wrap gap-1 relative z-10' },
+                    (classification.tags || []).map(tag => el('span', {
+                        key: tag,
+                        className: 'px-1.5 py-0.5 rounded text-[9px] font-mono border transition-colors',
+                        style: {
+                            backgroundColor: 'var(--tl-surface-hover)',
+                            borderColor: 'var(--tl-border)',
+                            color: 'var(--tl-text-secondary)'
+                        }
+                    }, `#${tag}`))
+                )
             ]),
-            el('div', { className: 'flex flex-wrap gap-1 mb-2' },
-                (classification.tags || []).map(tag => el('span', { key: tag, className: 'px-1.5 py-0.5 bg-white/50 rounded text-[9px] font-mono opacity-70' }, `#${tag}`))
-            ),
-            el('p', { className: 'text-[13px] font-medium opacity-90 leading-relaxed' }, classification.suggestion)
+
+            // AI Deep Dive Section
+            el('div', { className: 'bg-[rgba(0,0,0,0.1)] px-3 py-2.5' }, [
+                el('div', { className: 'flex items-center justify-between mb-2' }, [
+                    el('div', { className: 'flex items-center gap-2' }, [
+                        el('span', { className: 'material-icons text-[var(--tl-primary-light)] text-[16px]' }, 'auto_fix_high'),
+                        el('h3', { className: 'text-[11px] font-bold text-[var(--tl-primary-light)] uppercase tracking-wider' },
+                            currentAiInsight ? `BugSneak AI Insight (${aiProvider})` : 'BugSneak AI Insight'
+                        )
+                    ]),
+                    aiEnabled && !currentAiInsight && el('button', {
+                        onClick: runAIAnalysis,
+                        disabled: aiLoading,
+                        className: 'px-2.5 py-1 bg-[var(--tl-primary)] text-white text-[10px] font-bold rounded uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all shadow-sm'
+                    }, aiLoading ? 'Analyzing...' : 'Deep Dive Analysis')
+                ]),
+
+                // Content Area
+                (currentAiInsight || aiLoading) ?
+                    el('div', { className: `transition-opacity ${aiLoading ? 'opacity-50' : 'opacity-100'}` },
+                        el(MarkdownContent, {
+                            content: currentAiInsight ? currentAiInsight.text : '',
+                            error: currentAiInsight?.error,
+                            fallback: aiLoading ? 'Generating insight...' : '',
+                            isDark
+                        })
+                    )
+                    :
+                    el('p', { className: 'text-[11px] text-[var(--tl-text-faint)] italic' },
+                        'Run a deep dive analysis to get code snippets, solutions, and architectural advice from the AI engine.'
+                    )
+            ])
         ])
     ]);
 };

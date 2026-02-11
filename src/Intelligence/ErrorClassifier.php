@@ -307,12 +307,145 @@ class ErrorClassifier
             'tags'      => ['filesystem', 'upload'],
             'suggestion'=> 'Failed to move uploaded file. Check upload_tmp_dir or permissions.',
         ],
+        [
+            'type'      => 'regex',
+            'pattern'   => '/There has been a critical error on this website/i',
+            'category'  => 'WordPress Critical Error',
+            'severity'  => 'critical',
+            'weight'    => 100,
+            'tags'      => ['wp-core', 'fatal'],
+            'suggestion'=> 'Enable WP_DEBUG to view detailed error logs.',
+        ],
+        
+        [
+            'type'      => 'regex',
+            'pattern'   => '/nonce verification failed/i',
+            'category'  => 'Nonce Verification Failure',
+            'severity'  => 'medium',
+            'weight'    => 70,
+            'tags'      => ['security', 'nonce'],
+            'suggestion'=> 'Nonce may be expired or invalid. Refresh the page and retry.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Error establishing a database connection/i',
+            'category'  => 'Database Connection Failure',
+            'severity'  => 'critical',
+            'weight'    => 100,
+            'tags'      => ['database', 'wp-config'],
+            'suggestion'=> 'Verify DB credentials in wp-config.php and check MySQL service.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Plugin could not be activated because it triggered a fatal error/i',
+            'category'  => 'Plugin Activation Failure',
+            'severity'  => 'high',
+            'weight'    => 90,
+            'tags'      => ['plugin', 'activation'],
+            'suggestion'=> 'Review stack trace to identify incompatible code or PHP version mismatch.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Required parameter .* follows optional parameter/i',
+            'category'  => 'PHP 8 Compatibility Issue',
+            'severity'  => 'high',
+            'weight'    => 85,
+            'tags'      => ['php8', 'compatibility'],
+            'suggestion'=> 'Update plugin or fix function signature for PHP 8 compatibility.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/rest_forbidden/i',
+            'category'  => 'REST Permission Denied',
+            'severity'  => 'medium',
+            'weight'    => 70,
+            'tags'      => ['rest', 'permission'],
+            'suggestion'=> 'Check REST permission_callback and current_user_can logic.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Block validation failed/i',
+            'category'  => 'Block Validation Failure',
+            'severity'  => 'medium',
+            'weight'    => 75,
+            'tags'      => ['gutenberg', 'block'],
+            'suggestion'=> 'Block markup may differ from saved content. Check custom block rendering.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/wp_cron/i',
+            'category'  => 'WP Cron Failure',
+            'severity'  => 'medium',
+            'weight'    => 60,
+            'tags'      => ['cron', 'scheduler'],
+            'suggestion'=> 'Ensure WP-Cron is enabled or configure a real server cron job.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Table .* doesn\'t exist/i',
+            'category'  => 'Missing Database Table',
+            'severity'  => 'critical',
+            'weight'    => 95,
+            'tags'      => ['database', 'migration'],
+            'suggestion'=> 'Plugin may not have created required tables. Try reactivating it.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/is_multisite/i',
+            'category'  => 'Multisite Misconfiguration',
+            'severity'  => 'medium',
+            'weight'    => 65,
+            'tags'      => ['multisite', 'network'],
+            'suggestion'=> 'Verify multisite constants in wp-config.php.',
+        ],
+
+        [
+            'type'      => 'regex',
+            'pattern'   => '/ImagickException/i',
+            'category'  => 'Imagick Processing Failure',
+            'severity'  => 'medium',
+            'weight'    => 75,
+            'tags'      => ['imagick', 'media'],
+            'suggestion'=> 'Ensure Imagick extension is installed and enabled.',
+        ],
+        
+        [
+            'type'      => 'regex',
+            'pattern'   => '/Cannot modify header information - headers already sent/i',
+            'category'  => 'Headers Already Sent',
+            'severity'  => 'medium',
+            'weight'    => 80,
+            'tags'      => ['output', 'php'],
+            'suggestion'=> 'Remove whitespace before <?php or after closing ?> tags.',
+        ],
+        
+        [
+            'type'      => 'regex',
+            'pattern'   => '/SSL certificate problem/i',
+            'category'  => 'SSL Certificate Error',
+            'severity'  => 'high',
+            'weight'    => 85,
+            'tags'      => ['ssl', 'api'],
+            'suggestion'=> 'Verify SSL certificate chain and hosting configuration.',
+        ],
     ];
 
     /**
-     * Classify error message
+     * Classify error message with context-aware scoring.
+     * 
+     * @param string $message The error message to classify.
+     * @param array  $context Environmental context (php_version, wp_version, is_admin, etc.)
+     * @return array Classification result.
      */
-    public static function classify(string $message): array
+    public static function classify(string $message, array $context = []): array
     {
         $matches = [];
         
@@ -332,6 +465,8 @@ class ErrorClassifier
             }
 
             if ($matched) {
+                // Apply dynamic scoring based on context
+                $rule['weight'] = self::applyContextScore($rule, $context);
                 $matches[] = $rule;
             }
         }
@@ -356,10 +491,80 @@ class ErrorClassifier
         return [
             'category'   => $primary['category'],
             'severity'   => $primary['severity'],
-            'confidence' => $primary['weight'],
+            // Cap confidence at 100%
+            'confidence' => min($primary['weight'], 100),
             'tags'       => self::collectTags($matches),
             'suggestion' => $primary['suggestion'],
         ];
+    }
+
+    /**
+     * Apply context-based score adjustments.
+     * 
+     * @param array $rule    The matched rule.
+     * @param array $context The environment context.
+     * @return int Modified weight.
+     */
+    protected static function applyContextScore(array $rule, array $context): int
+    {
+        $score = $rule['weight'];
+        $tags  = $rule['tags'] ?? [];
+
+        // 1. PHP Version Compatibility
+        // If PHP < 8.0 and error is compatibility-related -> Boost score
+        if ( isset($context['php_version']) && version_compare($context['php_version'], '8.0', '<') ) {
+            if (in_array('compatibility', $tags) || in_array('php8', $tags)) {
+                $score += 15;
+            }
+        }
+
+        // 2. WordPress Version Check
+        // If WP < 6.0 -> Boost score
+        if ( isset($context['wp_version']) && version_compare($context['wp_version'], '6.0', '<') ) {
+            $score += 5;
+        }
+
+        // 3. Environment Context
+        if (!empty($context['is_multisite']) && in_array('multisite', $tags)) {
+            $score += 10;
+        }
+
+        if (!empty($context['is_rest']) && in_array('rest', $tags)) {
+            $score += 10;
+        }
+
+        if (!empty($context['is_admin']) && in_array('permission', $tags)) {
+            $score += 8;
+        }
+
+        // 4. Culprit Correlation (Even Smarter)
+        // If the suspected culprit matches a tag (e.g., 'woocommerce'), boost confidence
+        if ( !empty($context['culprit']) ) {
+            // Simple slug matching
+            $culprit = strtolower($context['culprit']);
+            foreach ($tags as $tag) {
+                if (strpos($culprit, strtolower($tag)) !== false) {
+                    $score += 10;
+                    break;
+                }
+            }
+        }
+
+        // 5. Spike Detection
+        if ( !empty($context['is_spike']) ) {
+            $score += 5;
+        }
+
+        // 6. Healthy Environment Penalty (Adaptive Scoring)
+        // If environment is very modern, likely NOT a legacy issue
+        if ( 
+            isset($context['php_version']) && version_compare($context['php_version'], '8.2', '>=') &&
+            isset($context['wp_version']) && version_compare($context['wp_version'], '6.4', '>=') 
+        ) {
+            $score -= 5;
+        }
+
+        return $score;
     }
 
     /**
