@@ -7,6 +7,9 @@ Stable tag: 1.3.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
+== Short Description ==
+Catch Fatal Errors and Exceptions with interactive diagnostics and optional AI-powered insights.
+
 == Description ==
 Catch Fatal Errors and Exceptions with interactive diagnostics and optional AI-powered insights.
 

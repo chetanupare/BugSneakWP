@@ -10,15 +10,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$bs_env = [
+$bugsneak_env = [
 	'php'   => PHP_VERSION,
 	'wp'    => $GLOBALS['wp_version'] ?? 'Unknown',
 	'os'    => php_uname( 's' ),
 	'theme' => wp_get_theme()->get( 'Name' ),
 ];
 
-$bs_snippet  = $data['code_snippet'] ?? [];
-$bs_severity = $data['severity'] ?? 'Fatal';
+$bugsneak_snippet  = $data['code_snippet'] ?? [];
+$bugsneak_severity = $data['severity'] ?? 'Fatal';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,9 +26,14 @@ $bs_severity = $data['severity'] ?? 'Fatal';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BugSneak — <?php echo esc_html( $data['message'] ); ?></title>
+    <!-- phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript -->
+    <!-- phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -->
+    <!-- Inline resources required during fatal error recovery when wp_enqueue is unavailable -->
     <script src="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/tailwindcss.js' ); ?>"></script>
     <link href="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/inter.css' ); ?>" rel="stylesheet">
     <link href="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/material-icons.css' ); ?>" rel="stylesheet">
+    <!-- phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedScript -->
+    <!-- phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -->
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; min-height: 100vh; }
@@ -40,29 +45,29 @@ $bs_severity = $data['severity'] ?? 'Fatal';
 <body class="min-h-screen flex flex-col">
 
     <?php
-    $nav_logo = defined('BUGSNEAK_URL') ? BUGSNEAK_URL . 'logo-text-new.svg' : '';
+    $bugsneak_nav_logo = defined('BUGSNEAK_URL') ? BUGSNEAK_URL . 'logo-text-new.svg' : '';
     
     // Run Classification (Layer 2) with Context Intelligence
-    $classification = [ 'category' => 'Unclassified', 'suggestion' => 'Review stack trace for details.', 'severity' => 'unknown' ];
+    $bugsneak_classification = [ 'category' => 'Unclassified', 'suggestion' => 'Review stack trace for details.', 'severity' => 'unknown' ];
     if ( class_exists( '\BugSneak\Intelligence\ErrorClassifier' ) ) {
-        $context = \BugSneak\Intelligence\ContextBuilder::build();
-        $context['culprit'] = $data['culprit'] ?? null;
+        $bugsneak_context = \BugSneak\Intelligence\ContextBuilder::build();
+        $bugsneak_context['culprit'] = $data['culprit'] ?? null;
         
-        $classification = \BugSneak\Intelligence\ErrorClassifier::classify( $data['message'], $context );
+        $bugsneak_classification = \BugSneak\Intelligence\ErrorClassifier::classify( $data['message'], $bugsneak_context );
     }
     ?>
 
     <!-- Header Bar -->
     <header class="bg-[#1e293b] border-b border-[#334155] h-12 flex items-center justify-between px-6 shrink-0">
         <div class="flex items-center gap-2.5">
-            <?php if ( $nav_logo ) : ?>
-                <img src="<?php echo esc_url( $nav_logo ); ?>" alt="BugSneak" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
+            <?php if ( $bugsneak_nav_logo ) : ?>
+                <img src="<?php echo esc_url( $bugsneak_nav_logo ); ?>" alt="BugSneak" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
             <?php else : ?>
                 <span class="font-bold text-sm tracking-tight text-white">BugSneak</span>
             <?php endif; ?>
             <span class="text-[9px] font-bold text-[#94a3b8] bg-[#334155] px-1.5 py-0.5 rounded ml-1 uppercase tracking-wider">Diagnostic</span>
         </div>
-        <div class="text-[10px] text-[#64748b] font-mono uppercase tracking-widest hidden sm:block">Intercepted · <?php echo esc_html( strtoupper( $bs_severity ) ); ?></div>
+        <div class="text-[10px] text-[#64748b] font-mono uppercase tracking-widest hidden sm:block">Intercepted · <?php echo esc_html( strtoupper( $bugsneak_severity ) ); ?></div>
     </header>
 
     <main class="flex-1 max-w-5xl mx-auto w-full px-6 py-8 space-y-6">
@@ -70,12 +75,12 @@ $bs_severity = $data['severity'] ?? 'Fatal';
         <!-- Error Badge + Message -->
         <div class="space-y-3">
             <div class="flex items-center gap-2.5">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold text-white uppercase tracking-wider shadow-lg <?php echo strtolower( $bs_severity ) === 'warning' ? 'bg-[#f59e0b] shadow-[#f59e0b]/20' : 'bg-[#ef4444] shadow-[#ef4444]/20'; ?>">
-                    <?php echo esc_html( strtoupper( $bs_severity ) ); ?>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold text-white uppercase tracking-wider shadow-lg <?php echo strtolower( $bugsneak_severity ) === 'warning' ? 'bg-[#f59e0b] shadow-[#f59e0b]/20' : 'bg-[#ef4444] shadow-[#ef4444]/20'; ?>">
+                    <?php echo esc_html( strtoupper( $bugsneak_severity ) ); ?>
                 </span>
-                <?php if ( $classification['category'] !== 'Unclassified' ) : ?>
+                <?php if ( $bugsneak_classification['category'] !== 'Unclassified' ) : ?>
                     <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold text-[#e2e8f0] bg-[#334155] border border-[#475569] uppercase tracking-wider">
-                        <?php echo esc_html( $classification['category'] ); ?>
+                        <?php echo esc_html( $bugsneak_classification['category'] ); ?>
                     </span>
                 <?php endif; ?>
                 <span class="text-[10px] text-[#64748b] font-mono tracking-wider">v1.3 Engine</span>
@@ -143,16 +148,16 @@ $bs_severity = $data['severity'] ?? 'Fatal';
                     </div>
                 </div>
                 <div class="font-mono text-[12px] leading-5 overflow-x-auto text-[#cbd5e1] custom-scrollbar">
-                    <?php if ( ! empty( $bs_snippet['lines'] ) ) : ?>
+                    <?php if ( ! empty( $bugsneak_snippet['lines'] ) ) : ?>
                         <table class="w-full border-collapse">
                             <tbody>
-                                <?php foreach ( $bs_snippet['lines'] as $bs_num => $bs_line ) : ?>
-                                    <?php $bs_is_target = (int) $bs_num === (int) $bs_snippet['target']; ?>
-                                    <tr class="<?php echo $bs_is_target ? 'bg-[rgba(239,68,68,0.12)]' : ''; ?>">
-                                        <td class="w-12 text-right pr-4 text-[#475569] select-none border-r border-[#334155] <?php echo $bs_is_target ? 'text-white font-bold' : ''; ?>"><?php echo (int) $bs_num; ?></td>
-                                        <td class="pl-4 py-px <?php echo $bs_is_target ? 'text-white font-bold border-l-2 border-[#ef4444]' : ''; ?>">
-                                            <?php echo esc_html( $bs_line ); ?>
-                                            <?php if ( $bs_is_target ) : ?>
+                                <?php foreach ( $bugsneak_snippet['lines'] as $bugsneak_num => $bugsneak_line ) : ?>
+                                    <?php $bugsneak_is_target = (int) $bugsneak_num === (int) $bugsneak_snippet['target']; ?>
+                                    <tr class="<?php echo $bugsneak_is_target ? 'bg-[rgba(239,68,68,0.12)]' : ''; ?>">
+                                        <td class="w-12 text-right pr-4 text-[#475569] select-none border-r border-[#334155] <?php echo $bugsneak_is_target ? 'text-white font-bold' : ''; ?>"><?php echo (int) $bugsneak_num; ?></td>
+                                        <td class="pl-4 py-px <?php echo $bugsneak_is_target ? 'text-white font-bold border-l-2 border-[#ef4444]' : ''; ?>">
+                                            <?php echo esc_html( $bugsneak_line ); ?>
+                                            <?php if ( $bugsneak_is_target ) : ?>
                                                 <span class="text-[#fca5a5] text-[10px] ml-4 italic">← error here</span>
                                             <?php endif; ?>
                                         </td>
@@ -169,10 +174,10 @@ $bs_severity = $data['severity'] ?? 'Fatal';
 
         <!-- Environment Grid -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-            <?php foreach ( $bs_env as $bs_label => $bs_val ) : ?>
+            <?php foreach ( $bugsneak_env as $bugsneak_label => $bugsneak_val ) : ?>
                 <div class="p-4 bg-[#1e293b] rounded-lg border border-[#334155]">
-                    <span class="block text-[9px] font-bold text-[#64748b] uppercase tracking-wider mb-1"><?php echo esc_html( $bs_label ); ?></span>
-                    <span class="text-[13px] font-semibold text-[#e2e8f0]"><?php echo esc_html( $bs_val ); ?></span>
+                    <span class="block text-[9px] font-bold text-[#64748b] uppercase tracking-wider mb-1"><?php echo esc_html( $bugsneak_label ); ?></span>
+                    <span class="text-[13px] font-semibold text-[#e2e8f0]"><?php echo esc_html( $bugsneak_val ); ?></span>
                 </div>
             <?php endforeach; ?>
         </div>

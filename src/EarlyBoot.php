@@ -74,8 +74,10 @@ final class BugSneak_Early_Buffer {
  * BugSneak is a crash intelligence system. We must use set_error_handler
  * to intercept PHP warnings and notices before they are lost.
  */
+// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Core feature of error logging plugin
 set_error_handler(
 	function ( $errno, $errstr, $errfile, $errline ) {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting -- Required for error capture
 		if ( ! ( error_reporting() & $errno ) ) {
 			return false;
 		}
