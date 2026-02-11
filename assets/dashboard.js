@@ -128,11 +128,11 @@ const Header = ({ search, setSearch, loading, onRefresh, isDark, toggleTheme, se
                 el('span', { className: 'text-[10px] font-bold text-[var(--tl-text-muted)] bg-[var(--tl-surface-hover)] px-2 py-0.5 rounded-md ml-2 uppercase tracking-wider' }, 'v1.3.4')
             ]),
             el('div', { className: 'hidden md:flex relative w-72' }, [
-                el('span', { className: 'absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none' },
+                el('span', { className: 'absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none' },
                     el('span', { className: 'material-icons text-[18px] text-[var(--tl-text-faint)]' }, 'search')
                 ),
                 el('input', {
-                    className: 'block w-full pl-10 pr-3 py-2 border border-[var(--tl-border)] rounded-lg bg-[var(--tl-input-bg)] text-sm text-[var(--tl-text)] placeholder-[var(--tl-text-faint)] focus:ring-2 focus:ring-[var(--tl-primary)]/40 focus:border-[var(--tl-primary)] transition-all outline-none',
+                    className: 'block w-full pl-3 pr-10 py-2 border border-[var(--tl-border)] rounded-lg bg-[var(--tl-input-bg)] text-sm text-[var(--tl-text)] placeholder-[var(--tl-text-faint)] focus:ring-2 focus:ring-[var(--tl-primary)]/40 focus:border-[var(--tl-primary)] transition-all outline-none',
                     placeholder: 'Search errors...', type: 'text', value: search,
                     onChange: (e) => setSearch(e.target.value)
                 })
