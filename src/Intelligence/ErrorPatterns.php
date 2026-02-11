@@ -181,6 +181,84 @@ class ErrorPatterns
             'suggestion' => 'Plugin may need update for current PHP version.',
         ],
 
+        // HTTP / cURL
+        [
+            'match' => 'cURL error',
+            'category' => 'HTTP Connection Failure',
+            'severity' => 'high',
+            'suggestion' => 'External API request failed. Check server connectivity or firewall settings.',
+        ],
+
+        // DB GONE AWAY
+        [
+            'match' => 'MySQL server has gone away',
+            'category' => 'Database Connection Lost',
+            'severity' => 'critical',
+            'suggestion' => 'Database server timed out or packet size is too large (max_allowed_packet).',
+        ],
+
+        // VISIBILITY
+        [
+            'match' => 'Call to private method',
+            'category' => 'Visibility Violation',
+            'severity' => 'high',
+            'suggestion' => 'Attempting to access a private class method. Check plugin compatibility.',
+        ],
+        [
+            'match' => 'Call to protected method',
+            'category' => 'Visibility Violation',
+            'severity' => 'high',
+            'suggestion' => 'Attempting to access a protected class method. Check plugin compatibility.',
+        ],
+
+        // COMPATIBILITY
+        [
+            'match' => 'must be compatible with',
+            'category' => 'Declaration Incompatibility',
+            'severity' => 'medium',
+            'suggestion' => 'Child class method signature does not match parent. Update plugin/theme.',
+        ],
+
+        // MATH
+        [
+            'match' => 'Division by zero',
+            'category' => 'Math Error',
+            'severity' => 'medium',
+            'suggestion' => 'Code attempted to divide by zero. Check logical conditions.',
+        ],
+
+        // JSON
+        [
+            'match' => 'json_decode',
+            'category' => 'JSON Parsing Error',
+            'severity' => 'medium',
+            'suggestion' => 'Failed to decode JSON data. Response might be malformed or empty.',
+        ],
+
+        // MAX INPUT VARS
+        [
+            'match' => 'Input variables exceeded',
+            'category' => 'Max Input Vars Exceeded',
+            'severity' => 'high',
+            'suggestion' => 'Menu/Form too large. Increase max_input_vars in php.ini.',
+        ],
+
+        // FILESYSTEM
+        [
+            'match' => 'failed to open stream: Permission denied',
+            'category' => 'File Write Permission',
+            'severity' => 'high',
+            'suggestion' => 'Server cannot write to file/folder. Check chmod/chown settings.',
+        ],
+
+        // UPLOAD
+        [
+            'match' => 'move_uploaded_file',
+            'category' => 'Upload Failure',
+            'severity' => 'high',
+            'suggestion' => 'Failed to move uploaded file. Check upload_tmp_dir or permissions.',
+        ],
+
     ];
 
     /**
