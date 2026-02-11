@@ -259,6 +259,7 @@ const Main = ({ activeLog, env, setLogStatus }) => {
         ]),
         el('div', { className: 'flex-1 overflow-auto p-6 custom-scrollbar' }, [
             activeTab === 'stack' && el('div', { className: 'space-y-4' }, [
+                el(ClassificationCard, { classification: activeLog.classification }),
                 el('div', { className: `bg-[var(--tl-primary-bg)] border border-[var(--tl-primary-border)] rounded-lg p-4 flex items-start gap-3 transition-all ${aiLoading ? 'animate-pulse' : ''}` }, [
                     el('div', { className: 'shrink-0 p-1.5 bg-[var(--tl-primary-bg)] rounded-lg' }, el('span', { className: 'material-icons text-[var(--tl-primary-light)] text-xl' }, 'auto_fix_high')),
                     el('div', { className: 'flex-1 min-w-0' }, [
@@ -380,6 +381,28 @@ const highlightLine = (c) => {
         if (p.match(/^[a-zA-Z_]\w*\(/)) return el('span', { key: i, className: 'text-[#fbbf24]' }, p);
         return p;
     });
+};
+
+const ClassificationCard = ({ classification }) => {
+    if (!classification || !classification.category || classification.category === 'Unclassified Error') return null;
+
+    const colors = {
+        'critical': 'border-l-4 border-red-500 bg-red-500/5 text-red-500',
+        'high': 'border-l-4 border-orange-500 bg-orange-500/5 text-orange-600',
+        'medium': 'border-l-4 border-yellow-500 bg-yellow-500/5 text-yellow-600',
+        'low': 'border-l-4 border-blue-500 bg-blue-500/5 text-blue-600',
+        'unknown': 'border-l-4 border-gray-400 bg-gray-100 text-gray-500'
+    };
+
+    const theme = colors[classification.severity] || colors['unknown'];
+
+    return el('div', { className: `rounded-r-lg p-4 mb-2 ${theme}` }, [
+        el('div', { className: 'flex items-center gap-2 mb-1.5' }, [
+            el('span', { className: 'material-icons text-[18px]' }, 'lightbulb'),
+            el('h3', { className: 'text-[11px] font-bold uppercase tracking-wider' }, classification.category)
+        ]),
+        el('p', { className: 'text-[13px] font-medium opacity-90 leading-relaxed' }, classification.suggestion)
+    ]);
 };
 
 // ─── Init ───────────────────────────────────────────────────────────────────

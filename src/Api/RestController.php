@@ -101,6 +101,11 @@ class RestController {
 	 */
 	public function get_logs() {
 		$logs = \BugSneak\Database\Schema::get_logs( 100 );
+		$logs = array_map( function( $log ) {
+			$log['classification'] = \BugSneak\Intelligence\ErrorPatterns::analyze( $log['error_message'] );
+			return $log;
+		}, $logs );
+
 		return rest_ensure_response( $logs );
 	}
 

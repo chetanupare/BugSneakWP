@@ -112,7 +112,10 @@ class DashboardController {
 				[
 					'root'        => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
-					'logs'        => \BugSneak\Database\Schema::get_logs( 50 ),
+					'logs'        => array_map( function( $log ) {
+						$log['classification'] = \BugSneak\Intelligence\ErrorPatterns::analyze( $log['error_message'] );
+						return $log;
+					}, \BugSneak\Database\Schema::get_logs( 50 ) ),
 					'settingsUrl' => admin_url( 'tools.php?page=bugsneak-settings' ),
 					'env'         => [
 						'php_version'  => PHP_VERSION,
