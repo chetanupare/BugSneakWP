@@ -135,6 +135,7 @@ class Engine {
 		} catch ( \Throwable $e ) {
 			// Fail silently — never let the logger crash the site.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Critical robustness fallback
 				error_log( 'BugSneak Logger Failed: ' . $e->getMessage() );
 			}
 		}
@@ -315,6 +316,7 @@ class Engine {
 		} catch ( \Throwable $e ) {
 			// If overlay fails, just let PHP's own error handling (or other handlers) take over.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Critical robustness fallback
 				error_log( 'BugSneak Overlay Failed: ' . $e->getMessage() );
 			}
 		}
