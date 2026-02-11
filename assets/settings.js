@@ -28,6 +28,22 @@ const SettingsApp = () => {
 
     useEffect(() => { localStorage.setItem('bugsneak_theme', isDark ? 'dark' : 'light'); }, [isDark]);
 
+    // Responsive viewport calculation
+    const [viewportHeight, setViewportHeight] = useState('100vh');
+
+    useEffect(() => {
+        const updateHeight = () => {
+            const adminBar = document.getElementById('wpadminbar');
+            const barHeight = adminBar ? adminBar.offsetHeight : 0;
+            // Subtract barHeight to fit exactly below it
+            setViewportHeight(`${window.innerHeight - barHeight}px`);
+        };
+
+        updateHeight();
+        window.addEventListener('resize', updateHeight);
+        return () => window.removeEventListener('resize', updateHeight);
+    }, []);
+
     const update = (key, value) => { setSettings(prev => ({ ...prev, [key]: value })); setSaved(false); };
     const updateNested = (parentKey, childKey, value) => { setSettings(prev => ({ ...prev, [parentKey]: { ...prev[parentKey], [childKey]: value } })); setSaved(false); };
 
@@ -197,21 +213,7 @@ const SettingsApp = () => {
         }
     ];
 
-    // Responsive viewport calculation
-    const [viewportHeight, setViewportHeight] = useState('100vh');
 
-    useEffect(() => {
-        const updateHeight = () => {
-            const adminBar = document.getElementById('wpadminbar');
-            const barHeight = adminBar ? adminBar.offsetHeight : 0;
-            // Subtract barHeight to fit exactly below it
-            setViewportHeight(`${window.innerHeight - barHeight}px`);
-        };
-
-        updateHeight();
-        window.addEventListener('resize', updateHeight);
-        return () => window.removeEventListener('resize', updateHeight);
-    }, []);
 
     return el('div', {
         id: 'bugsneak-settings-root',
