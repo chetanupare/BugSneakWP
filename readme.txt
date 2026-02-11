@@ -3,7 +3,7 @@ Contributors: chetanupare
 Tags: debug, error log, stack trace, fatal error, php error
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 1.4.0
+Stable tag: 1.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,29 @@ No. All logging is stored locally. External AI providers are only contacted when
 
 == Changelog ==
 
+= 1.4.4 =
+* Compliance: Removed discouraged `load_plugin_textdomain()` call to align with WordPress.org standards.
+* Compliance: Removed forbidden hidden files from the distribution package.
+* Fix: Synchronized internal `BUGSNEAK_VERSION` constant with the plugin version.
+
+= 1.4.3 =
+* Refactor: Standardized PHP syntax (array syntax, quotes) for better compatibility with older environments.
+* Maintenance: Updated internal engine handlers and sanitized SQL queries.
+* Documentation: Improved code documentation and class structures.
+
+= 1.4.2 =
+* Architecture: Extracted i18n logic into a dedicated `I18n` class for better maintainability.
+* Refactor: Cleaned up `DashboardController` by moving static localization strings.
+
+= 1.4.1 =
+* Internationalization: Full support for Spanish, German, French, and Brazilian Portuguese.
+* i18n: Localized both PHP backend and React frontend via a robust JS bridge.
+* Engine: Compiled binary .mo files for enhanced translation performance.
+
+= 1.4.0 =
+* Branding: Finalized transition to BugSneak.
+* Reliability: Added MU-Loader for early-boot crash capture.
+
 = 1.3.5 =
 * Feature: Context-Aware Intelligence Engine. Dynamic confidence scoring based on PHP/WP version and request context.
 * Feature: Spike Detection. Detects rapid bursts of repeated errors to highlight abnormal crash patterns.
@@ -97,8 +120,6 @@ No. All logging is stored locally. External AI providers are only contacted when
 * Major Refactor: Standalone Settings page with Health Indicators.
 * Performance: Optimized database indexes (last_seen, created_at).
 * Added: Culprit strategy selection (First vs Deepest).
-* Reliability: Added MU-Loader for early-boot crash capture.
-* Safety: Added capacity guards and memory safety during log insertion.
 
 = 1.1.0 =
 * Added intelligent error grouping.

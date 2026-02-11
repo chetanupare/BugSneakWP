@@ -1,0 +1,1038 @@
+# Copyright (C) 2026 Chetan Upare
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: BugSneak 1.4.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/bugsneak\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-02-11T22:18:53+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: bugsneak\n"
+
+#. Plugin Name of the plugin
+#: bugsneak.php
+#: src/Admin/DashboardController.php:77
+#: src/Admin/DashboardController.php:78
+msgid "BugSneak"
+msgstr "BugSneak"
+
+#. Plugin URI of the plugin
+#: bugsneak.php
+msgid "https://bugsneak.com"
+msgstr ""
+
+#. Description of the plugin
+#: bugsneak.php
+msgid "Crash Intelligence System — intercepts PHP Fatal Errors, Exceptions, and Warnings with beautiful diagnostics."
+msgstr "Fehler-Intelligenz-System — fängt fatale PHP-Fehler, Ausnahmen und Warnungen mit schöner Diagnose ab."
+
+#. Author of the plugin
+#: bugsneak.php
+msgid "Chetan Upare"
+msgstr ""
+
+#. Author URI of the plugin
+#: bugsneak.php
+msgid "https://github.com/chetanupare/"
+msgstr ""
+
+#: src/Admin/DashboardController.php:85
+msgid "BugSneak Settings"
+msgstr ""
+
+#: src/Admin/DashboardController.php:184
+msgid "Search errors..."
+msgstr "Fehler suchen..."
+
+#: src/Admin/DashboardController.php:185
+msgid "Loading..."
+msgstr "Laden..."
+
+#: src/Admin/DashboardController.php:186
+#: src/Admin/DashboardController.php:269
+msgid "Fatal Errors"
+msgstr "Fatale Fehler"
+
+#: src/Admin/DashboardController.php:187
+#: src/Admin/DashboardController.php:272
+msgid "Warnings"
+msgstr "Warnungen"
+
+#: src/Admin/DashboardController.php:188
+msgid "All"
+msgstr "Alle"
+
+#: src/Admin/DashboardController.php:189
+msgid "Open"
+msgstr "Offen"
+
+#: src/Admin/DashboardController.php:190
+msgid "Resolved"
+msgstr "Gelöst"
+
+#: src/Admin/DashboardController.php:191
+msgid "Ignored"
+msgstr "Ignoriert"
+
+#: src/Admin/DashboardController.php:192
+msgid "Status update failed"
+msgstr "Statusaktualisierung fehlgeschlagen"
+
+#: src/Admin/DashboardController.php:193
+msgid "Failed to fetch logs"
+msgstr "Protokolle konnten nicht abgerufen werden"
+
+#: src/Admin/DashboardController.php:194
+msgid "Environment"
+msgstr "Umgebung"
+
+#: src/Admin/DashboardController.php:195
+msgid "Stack Trace"
+msgstr "Stapelverfolgung"
+
+#: src/Admin/DashboardController.php:196
+msgid "Request Details"
+msgstr "Anfragedetails"
+
+#: src/Admin/DashboardController.php:197
+msgid "Analyze with AI"
+msgstr "Mit KI analysieren"
+
+#: src/Admin/DashboardController.php:198
+msgid "Culprit detected"
+msgstr "Verursacher erkannt"
+
+#: src/Admin/DashboardController.php:199
+msgid "Light Mode"
+msgstr "Heller Modus"
+
+#: src/Admin/DashboardController.php:200
+msgid "Dark Mode"
+msgstr "Dunkler Modus"
+
+#: src/Admin/DashboardController.php:201
+#: src/Admin/DashboardController.php:250
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: src/Admin/DashboardController.php:202
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: src/Admin/DashboardController.php:203
+msgid "Docs"
+msgstr "Dokus"
+
+#: src/Admin/DashboardController.php:204
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/Admin/DashboardController.php:205
+msgid "No errors found"
+msgstr "Keine Fehler gefunden"
+
+#: src/Admin/DashboardController.php:206
+msgid "new"
+msgstr "neu"
+
+#: src/Admin/DashboardController.php:207
+msgid "Select an error to begin diagnostic"
+msgstr "Wählen Sie einen Fehler aus, um die Diagnose zu starten"
+
+#: src/Admin/DashboardController.php:208
+msgid "Ignore"
+msgstr "Ignorieren"
+
+#: src/Admin/DashboardController.php:209
+msgid "Resolve"
+msgstr "Lösen"
+
+#: src/Admin/DashboardController.php:210
+msgid "Context"
+msgstr "Kontext"
+
+#: src/Admin/DashboardController.php:211
+msgid "No data."
+msgstr "Keine Daten."
+
+#: src/Admin/DashboardController.php:212
+msgid "Telemetry: 100% Local · No External Calls"
+msgstr "Telemetrie: 100 % lokal · Keine externen Aufrufe"
+
+#: src/Admin/DashboardController.php:213
+msgid "Copy Bundle"
+msgstr "Paket kopieren"
+
+#: src/Admin/DashboardController.php:214
+msgid "Copied!"
+msgstr "Kopiert!"
+
+#: src/Admin/DashboardController.php:215
+msgid "High Confidence"
+msgstr "Hohes Vertrauen"
+
+#: src/Admin/DashboardController.php:216
+msgid "Medium Confidence"
+msgstr "Mittleres Vertrauen"
+
+#: src/Admin/DashboardController.php:217
+msgid "Low Confidence"
+msgstr "Geringes Vertrauen"
+
+#: src/Admin/DashboardController.php:218
+msgid "Abnormal Spike Detected"
+msgstr "Abnormaler Anstieg erkannt"
+
+#: src/Admin/DashboardController.php:219
+msgid "Error rate allows this to be classified as a spike."
+msgstr "Fehlerrate erlaubt die Klassifizierung als Anstieg."
+
+#: src/Admin/DashboardController.php:220
+msgid "Unknown Source"
+msgstr "Unbekannte Quelle"
+
+#: src/Admin/DashboardController.php:221
+msgid "System"
+msgstr "System"
+
+#: src/Admin/DashboardController.php:222
+msgid "Error originated from an unknown source."
+msgstr "Fehler stammt aus einer unbekannten Quelle."
+
+#: src/Admin/DashboardController.php:223
+msgid "BugSneak AI Insight"
+msgstr "BugSneak KI-Einblick"
+
+#: src/Admin/DashboardController.php:224
+#, php-format
+msgid "BugSneak AI Insight (%s)"
+msgstr "BugSneak KI-Einblick (%s)"
+
+#: src/Admin/DashboardController.php:225
+msgid "Analyzing..."
+msgstr "Analysieren..."
+
+#: src/Admin/DashboardController.php:226
+msgid "Deep Dive Analysis"
+msgstr "Tiefgehende Analyse"
+
+#: src/Admin/DashboardController.php:227
+msgid "Generating insight..."
+msgstr "Einblick generieren..."
+
+#: src/Admin/DashboardController.php:228
+msgid "Run a deep dive analysis to get code snippets, solutions, and architectural advice from the AI engine."
+msgstr "Führen Sie eine tiefgehende Analyse durch, um Code-Snippets, Lösungen und Architekturratschläge von der KI-Engine zu erhalten."
+
+#: src/Admin/DashboardController.php:229
+msgid "error here"
+msgstr "Fehler hier"
+
+#: src/Admin/DashboardController.php:230
+msgid "No code context available"
+msgstr "Kein Code-Kontext verfügbar"
+
+#: src/Admin/DashboardController.php:251
+msgid "Error Levels to Capture"
+msgstr "Zu erfassende Fehlerstufen"
+
+#: src/Admin/DashboardController.php:252
+msgid "Error Grouping"
+msgstr "Fehlergruppierung"
+
+#: src/Admin/DashboardController.php:253
+msgid "Database & Retention"
+msgstr "Datenbank & Aufbewahrung"
+
+#: src/Admin/DashboardController.php:254
+msgid "Culprit Detection"
+msgstr "Verursachererkennung"
+
+#: src/Admin/DashboardController.php:255
+msgid "Code Snippet View"
+msgstr "Code-Snippet-Ansicht"
+
+#: src/Admin/DashboardController.php:256
+msgid "Context Capture"
+msgstr "Kontexterfassung"
+
+#: src/Admin/DashboardController.php:257
+msgid "Performance & Safety"
+msgstr "Leistung & Sicherheit"
+
+#: src/Admin/DashboardController.php:258
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: src/Admin/DashboardController.php:259
+msgid "UI Preferences"
+msgstr "UI-Einstellungen"
+
+#: src/Admin/DashboardController.php:260
+msgid "Developer Mode"
+msgstr "Entwicklermodus"
+
+#: src/Admin/DashboardController.php:261
+msgid "AI Integration"
+msgstr "KI-Integration"
+
+#: src/Admin/DashboardController.php:262
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
+
+#: src/Admin/DashboardController.php:263
+msgid "Saving..."
+msgstr "Wird gespeichert..."
+
+#: src/Admin/DashboardController.php:264
+msgid "Settings saved!"
+msgstr "Einstellungen gespeichert!"
+
+#: src/Admin/DashboardController.php:265
+msgid "Failed to save settings"
+msgstr "Einstellungen konnten nicht gespeichert werden"
+
+#: src/Admin/DashboardController.php:266
+msgid "Purge All"
+msgstr "Alles löschen"
+
+#: src/Admin/DashboardController.php:267
+msgid "This will permanently delete ALL error logs. Continue?"
+msgstr "Dies wird permanent ALLE Fehlerprotokolle löschen. Fortfahren?"
+
+#: src/Admin/DashboardController.php:268
+msgid "Loading settings..."
+msgstr "Einstellungen werden geladen..."
+
+#: src/Admin/DashboardController.php:270
+msgid "Parse Errors"
+msgstr ""
+
+#: src/Admin/DashboardController.php:271
+msgid "Uncaught Exceptions"
+msgstr ""
+
+#: src/Admin/DashboardController.php:273
+msgid "Notices"
+msgstr ""
+
+#: src/Admin/DashboardController.php:274
+msgid "Deprecated"
+msgstr ""
+
+#: src/Admin/DashboardController.php:275
+msgid "Strict Standards"
+msgstr ""
+
+#: src/Admin/DashboardController.php:276
+msgid "Capture Mode"
+msgstr ""
+
+#: src/Admin/DashboardController.php:277
+msgid "Always enabled"
+msgstr "Immer aktiviert"
+
+#: src/Admin/DashboardController.php:278
+msgid "WP_DEBUG mode only"
+msgstr "Nur WP_DEBUG-Modus"
+
+#: src/Admin/DashboardController.php:279
+msgid "Production (always)"
+msgstr "Produktion (immer)"
+
+#: src/Admin/DashboardController.php:280
+msgid "Enable intelligent grouping"
+msgstr "Intelligente Gruppierung aktivieren"
+
+#: src/Admin/DashboardController.php:281
+msgid "Max occurrence counter"
+msgstr "Maximaler Vorkommenszähler"
+
+#: src/Admin/DashboardController.php:282
+msgid "Reset grouping after (minutes)"
+msgstr "Gruppierung zurücksetzen nach (Minuten)"
+
+#: src/Admin/DashboardController.php:283
+msgid "Merge identical stack traces only"
+msgstr "Nur identische Stapelverfolgungen zusammenführen"
+
+#: src/Admin/DashboardController.php:284
+msgid "Auto-delete logs older than"
+msgstr "Protokolle automatisch löschen, die älter sind als"
+
+#: src/Admin/DashboardController.php:285
+msgid "Maximum stored errors"
+msgstr "Maximal gespeicherte Fehler"
+
+#: src/Admin/DashboardController.php:286
+msgid "Cleanup cron frequency"
+msgstr "Cron-Frequenz für Bereinigung"
+
+#: src/Admin/DashboardController.php:287
+msgid "Detection strategy"
+msgstr "Erkennungsstrategie"
+
+#: src/Admin/DashboardController.php:288
+msgid "Ignore WordPress core frames"
+msgstr "WordPress-Kern-Frames ignorieren"
+
+#: src/Admin/DashboardController.php:289
+msgid "Ignore mu-plugins"
+msgstr "mu-plugins ignorieren"
+
+#: src/Admin/DashboardController.php:290
+msgid "Blacklisted plugins (comma-separated)"
+msgstr "Blacklist-Plugins (kommagetrennt)"
+
+#: src/Admin/DashboardController.php:291
+msgid "Lines before error"
+msgstr "Zeilen vor dem Fehler"
+
+#: src/Admin/DashboardController.php:292
+msgid "Lines after error"
+msgstr "Zeilen nach dem Fehler"
+
+#: src/Admin/DashboardController.php:293
+msgid "Enable syntax highlighting"
+msgstr "Syntax-Highlighting aktivieren"
+
+#: src/Admin/DashboardController.php:294
+msgid "Dark theme for code"
+msgstr "Dunkles Thema für Code"
+
+#: src/Admin/DashboardController.php:295
+msgid "Max file size to read (KB)"
+msgstr "Max. zu lesende Dateigröße (KB)"
+
+#: src/Admin/DashboardController.php:296
+msgid "Prevents memory issues"
+msgstr "Verhindert Speicherprobleme"
+
+#: src/Admin/DashboardController.php:297
+msgid "Disable frontend logging"
+msgstr "Frontend-Protokollierung deaktivieren"
+
+#: src/Admin/DashboardController.php:298
+msgid "Disable admin logging"
+msgstr "Admin-Protokollierung deaktivieren"
+
+#: src/Admin/DashboardController.php:299
+msgid "Enable only for administrators"
+msgstr "Nur für Administratoren aktivieren"
+
+#: src/Admin/DashboardController.php:300
+msgid "Safe mode (minimal context)"
+msgstr "Abgesicherter Modus (minimaler Kontext)"
+
+#: src/Admin/DashboardController.php:301
+msgid "Log only once per request"
+msgstr "Nur einmal pro Anfrage protokollieren"
+
+#: src/Admin/DashboardController.php:302
+msgid "Max errors per request"
+msgstr "Max. Fehler pro Anfrage"
+
+#: src/Admin/DashboardController.php:303
+msgid "Prevents loops"
+msgstr "Verhindert Schleifen"
+
+#: src/Admin/DashboardController.php:304
+msgid "When enabled, the dashboard will show:"
+msgstr "Wenn aktiviert, zeigt das Dashboard Folgendes an:"
+
+#: src/Admin/DashboardController.php:305
+msgid "Back to Dashboard"
+msgstr "Zurück zum Dashboard"
+
+#: src/Admin/DashboardController.php:306
+msgid "System Health"
+msgstr "Systemstatus"
+
+#: src/Admin/DashboardController.php:307
+msgid "All Systems Go"
+msgstr "Alle Systeme bereit"
+
+#: src/Admin/DashboardController.php:308
+msgid "Protected"
+msgstr "Geschützt"
+
+#: src/Admin/DashboardController.php:309
+msgid "Optimal"
+msgstr "Optimal"
+
+#: src/Admin/DashboardController.php:310
+msgid "Near Limit"
+msgstr "Nahe am Limit"
+
+#: src/Admin/DashboardController.php:311
+msgid "Database Usage"
+msgstr "Datenbanknutzung"
+
+#: src/Admin/DashboardController.php:312
+msgid "logs"
+msgstr "Protokolle"
+
+#: src/Admin/DashboardController.php:313
+msgid "Save Changes"
+msgstr "Änderungen speichern"
+
+#: src/Admin/DashboardController.php:314
+msgid "Saved"
+msgstr "Gespeichert"
+
+#: src/Admin/DashboardController.php:315
+msgid "Email, Slack, Webhooks, and Daily Digests are coming in v2.0."
+msgstr "E-Mail, Slack, Webhooks und tägliche Zusammenfassungen kommen in v2.0."
+
+#: src/Admin/DashboardController.php:316
+msgid "Modern Dark Mode is active."
+msgstr "Moderner Dunkelmodus ist aktiv."
+
+#: src/Admin/DashboardController.php:317
+#, php-format
+msgid "Get a free API Key at %s."
+msgstr "Holen Sie sich einen kostenlosen API-Schlüssel unter %s."
+
+#: src/Admin/DashboardController.php:318
+#, php-format
+msgid "Requires an OpenAI API Key. Get one at %s."
+msgstr "Erfordert einen OpenAI-API-Schlüssel. Holen Sie sich einen unter %s."
+
+#: src/Admin/DashboardController.php:319
+msgid "BugSneak · 100% Local · Zero External Calls"
+msgstr "BugSneak · 100 % lokal · Keine externen Aufrufe"
+
+#: src/Admin/DashboardController.php:320
+msgid "days"
+msgstr "Tage"
+
+#: src/Admin/DashboardController.php:321
+msgid "minutes"
+msgstr "Minuten"
+
+#: src/Admin/DashboardController.php:322
+msgid "never"
+msgstr "nie"
+
+#: src/Admin/DashboardController.php:323
+msgid "unlimited"
+msgstr "unbegrenzt"
+
+#: src/Admin/DashboardController.php:324
+#, php-format
+msgid "%s logs · %s"
+msgstr "%s Protokolle · %s"
+
+#: src/Admin/DashboardController.php:325
+msgid "Status"
+msgstr "Status"
+
+#: src/Admin/DashboardController.php:326
+msgid "Logging"
+msgstr "Protokollierung"
+
+#: src/Admin/DashboardController.php:327
+msgid "Daily"
+msgstr "Täglich"
+
+#: src/Admin/DashboardController.php:328
+msgid "Weekly"
+msgstr "Wöchentlich"
+
+#: src/Admin/DashboardController.php:329
+msgid "First plugin in stack trace"
+msgstr "Erster Plugin in der Stapelverfolgung"
+
+#: src/Admin/DashboardController.php:330
+msgid "Deepest plugin in stack trace"
+msgstr "Tiefster Plugin in der Stapelverfolgung"
+
+#: src/Admin/DashboardController.php:331
+msgid "Capture current user data"
+msgstr "Aktuelle Benutzerdaten erfassen"
+
+#: src/Admin/DashboardController.php:332
+msgid "Capture cookies"
+msgstr "Cookies erfassen"
+
+#: src/Admin/DashboardController.php:333
+msgid "Capture environment variables"
+msgstr "Umgebungsvariablen erfassen"
+
+#: src/Admin/DashboardController.php:334
+msgid "Capture memory usage"
+msgstr "Speichernutzung erfassen"
+
+#: src/Admin/DashboardController.php:335
+msgid "Capture current_filter()"
+msgstr "current_filter() erfassen"
+
+#: src/Admin/DashboardController.php:336
+msgid "Email on fatal error"
+msgstr "E-Mail bei fatalem Fehler"
+
+#: src/Admin/DashboardController.php:337
+msgid "Slack webhook"
+msgstr "Slack-Webhook"
+
+#: src/Admin/DashboardController.php:338
+msgid "Daily error summary digest"
+msgstr "Tägliche Fehlerzusammenfassung"
+
+#: src/Admin/DashboardController.php:339
+msgid "Real-time webhook trigger"
+msgstr "Echtzeit-Webhook-Trigger"
+
+#: src/Admin/DashboardController.php:340
+msgid "Compact view"
+msgstr "Kompakte Ansicht"
+
+#: src/Admin/DashboardController.php:341
+msgid "Expanded stack traces by default"
+msgstr "Erweiterte Stapelverfolgungen standardmäßig"
+
+#: src/Admin/DashboardController.php:342
+msgid "Show context sidebar"
+msgstr "Kontext-Seitenleiste anzeigen"
+
+#: src/Admin/DashboardController.php:343
+msgid "Enable Developer Mode"
+msgstr "Entwicklermodus aktivieren"
+
+#: src/Admin/DashboardController.php:344
+msgid "Raw stack trace JSON"
+msgstr "Roh-JSON der Stapelverfolgung"
+
+#: src/Admin/DashboardController.php:345
+msgid "Request ID"
+msgstr "Anfrage-ID"
+
+#: src/Admin/DashboardController.php:346
+msgid "Error hash"
+msgstr "Fehler-Hash"
+
+#: src/Admin/DashboardController.php:347
+msgid "Internal grouping key"
+msgstr "Interner Gruppierungsschlüssel"
+
+#: src/Admin/DashboardController.php:348
+msgid "DB query time"
+msgstr "Datenbank-Abfragezeit"
+
+#: src/Admin/DashboardController.php:349
+msgid "Enable AI-Powered Insights"
+msgstr "KI-gestützte Einblicke aktivieren"
+
+#: src/Admin/DashboardController.php:350
+msgid "AI Provider"
+msgstr "KI-Anbieter"
+
+#: src/Admin/DashboardController.php:351
+msgid "Google Gemini (Free Tier available)"
+msgstr "Google Gemini (kostenlose Stufe verfügbar)"
+
+#: src/Admin/DashboardController.php:352
+msgid "OpenAI ChatGPT"
+msgstr "OpenAI ChatGPT"
+
+#: src/Admin/DashboardController.php:353
+msgid "Gemini API Key"
+msgstr "Gemini API-Schlüssel"
+
+#: src/Admin/DashboardController.php:354
+msgid "OpenAI API Key"
+msgstr "OpenAI API-Schlüssel"
+
+#: src/Admin/DashboardController.php:355
+msgid "Model"
+msgstr "Modell"
+
+#: src/Admin/DashboardController.php:356
+msgid "System Status"
+msgstr "Systemstatus"
+
+#: src/Api/RestController.php:180
+msgid "No settings provided."
+msgstr ""
+
+#: src/Api/RestController.php:220
+msgid "Log entry not found."
+msgstr ""
+
+#: src/Api/RestController.php:248
+msgid "Invalid status provided."
+msgstr ""
+
+#: src/Core/AIProcessor.php:33
+msgid "AI is not enabled in settings."
+msgstr ""
+
+#: src/Core/AIProcessor.php:54
+msgid "Gemini API key is missing."
+msgstr ""
+
+#: src/Core/AIProcessor.php:82
+msgid "Gemini API returned an error."
+msgstr ""
+
+#: src/Core/AIProcessor.php:85
+msgid "Gemini returned an empty response."
+msgstr ""
+
+#: src/Core/AIProcessor.php:99
+msgid "OpenAI API key is missing."
+msgstr ""
+
+#: src/Core/AIProcessor.php:137
+msgid "OpenAI API returned an error."
+msgstr ""
+
+#: src/Core/AIProcessor.php:140
+msgid "OpenAI returned an empty response."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:24
+msgid "Memory Exhaustion"
+msgstr "Speichererschöpfung"
+
+#: src/Intelligence/ErrorClassifier.php:28
+msgid "Increase WP_MEMORY_LIMIT in wp-config.php or inspect memory-heavy plugins."
+msgstr "Erhöhen Sie das WP_MEMORY_LIMIT in der wp-config.php oder untersuchen Sie speicherintensive Plugins."
+
+#: src/Intelligence/ErrorClassifier.php:34
+msgid "Execution Timeout"
+msgstr "Zeitüberschreitung bei der Ausführung"
+
+#: src/Intelligence/ErrorClassifier.php:38
+msgid "Increase max_execution_time in php.ini or optimize long-running processes."
+msgstr "Erhöhen Sie die max_execution_time in der php.ini oder optimieren Sie lang laufende Prozesse."
+
+#: src/Intelligence/ErrorClassifier.php:44
+msgid "Missing Function"
+msgstr "Fehlende Funktion"
+
+#: src/Intelligence/ErrorClassifier.php:48
+msgid "Ensure required plugin or dependency is active and loaded properly."
+msgstr "Stellen Sie sicher, dass das erforderliche Plugin oder die Abhängigkeit aktiv ist und ordnungsgemäß geladen wurde."
+
+#: src/Intelligence/ErrorClassifier.php:54
+msgid "Missing Method"
+msgstr "Fehlende Methode"
+
+#: src/Intelligence/ErrorClassifier.php:58
+msgid "Plugin or class version mismatch. Verify compatibility and updates."
+msgstr "Versionskonflikt bei Plugin oder Klasse. Überprüfen Sie Kompatibilität und Updates."
+
+#: src/Intelligence/ErrorClassifier.php:64
+msgid "Missing Class"
+msgstr "Fehlende Klasse"
+
+#: src/Intelligence/ErrorClassifier.php:68
+msgid "Autoloader issue or missing dependency. Check plugin installation integrity."
+msgstr "Problem mit dem Autoloader oder fehlende Abhängigkeit. Überprüfen Sie die Integrität der Plugin-Installation."
+
+#: src/Intelligence/ErrorClassifier.php:74
+msgid "Redeclaration Conflict"
+msgstr "Neudeklarationskonflikt"
+
+#: src/Intelligence/ErrorClassifier.php:78
+msgid "Possible plugin conflict or duplicate file inclusion."
+msgstr "Möglicher Plugin-Konflikt oder doppelter Dateieinschluss."
+
+#: src/Intelligence/ErrorClassifier.php:84
+msgid "Database Error"
+msgstr "Datenbankfehler"
+
+#: src/Intelligence/ErrorClassifier.php:88
+msgid "Verify database credentials and check for corrupted tables."
+msgstr "Überprüfen Sie die Datenbankanmeldedaten und suchen Sie nach beschädigten Tabellen."
+
+#: src/Intelligence/ErrorClassifier.php:94
+#: src/Intelligence/ErrorClassifier.php:393
+msgid "Missing Database Table"
+msgstr "Fehlende Datenbanktabelle"
+
+#: src/Intelligence/ErrorClassifier.php:98
+msgid "Plugin activation may have failed. Try reactivating plugin."
+msgstr "Plugin-Aktivierung könnte fehlgeschlagen sein. Versuchen Sie, das Plugin erneut zu aktivieren."
+
+#: src/Intelligence/ErrorClassifier.php:104
+msgid "Database Connection Lost"
+msgstr "Datenbankverbindung verloren"
+
+#: src/Intelligence/ErrorClassifier.php:108
+msgid "Database server timed out or packet size is too large (max_allowed_packet)."
+msgstr "Datenbankserver-Zeitüberschreitung oder Paketgröße ist zu groß (max_allowed_packet)."
+
+#: src/Intelligence/ErrorClassifier.php:114
+msgid "Syntax Error"
+msgstr "Syntaxfehler"
+
+#: src/Intelligence/ErrorClassifier.php:118
+msgid "Check PHP syntax in the referenced file."
+msgstr "Überprüfen Sie die PHP-Syntax in der referenzierten Datei."
+
+#: src/Intelligence/ErrorClassifier.php:124
+msgid "Type Mismatch"
+msgstr "Typfehler"
+
+#: src/Intelligence/ErrorClassifier.php:128
+msgid "Invalid parameter type passed to function. Review recent code changes."
+msgstr "Ungültiger Parametertyp an Funktion übergeben. Überprüfen Sie die letzten Codeänderungen."
+
+#: src/Intelligence/ErrorClassifier.php:134
+msgid "Argument Mismatch"
+msgstr "Argumentenfehler"
+
+#: src/Intelligence/ErrorClassifier.php:138
+msgid "Function signature mismatch. Check plugin version compatibility."
+msgstr "Funktionssignaturkonflikt. Überprüfen Sie die Plugin-Versionskompatibilität."
+
+#: src/Intelligence/ErrorClassifier.php:144
+msgid "Undefined Array Key"
+msgstr "Undefinierter Array-Schlüssel"
+
+#: src/Intelligence/ErrorClassifier.php:148
+msgid "Check if array key/index exists before accessing it."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:154
+msgid "Invalid Object Access"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:158
+msgid "Object expected but null returned. Check conditional logic."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:164
+msgid "Null Reference"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:168
+msgid "Object may not be initialized properly."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:174
+msgid "Header Output Issue"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:178
+msgid "Output was sent before headers. Check for whitespace or echo statements."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:184
+msgid "Invalid REST Route"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:188
+msgid "Ensure REST route is registered correctly."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:194
+msgid "Session Conflict"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:198
+msgid "Session may already be started by another plugin."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:204
+msgid "Image Processing Error"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:208
+msgid "Ensure GD or Imagick extension is enabled."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:214
+msgid "Deprecated Function Usage"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:218
+msgid "Plugin may need update for current PHP version."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:224
+msgid "HTTP Connection Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:228
+msgid "External API request failed. Check server connectivity or firewall settings."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:234
+msgid "Visibility Violation"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:238
+msgid "Attempting to access a protected/private class method. Check plugin compatibility."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:244
+msgid "Declaration Incompatibility"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:248
+msgid "Child class method signature does not match parent. Update plugin/theme."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:254
+msgid "Math Error"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:258
+msgid "Code attempted to divide by zero. Check logical conditions."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:264
+msgid "JSON Parsing Error"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:268
+msgid "Failed to decode JSON data. Response might be malformed or empty."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:274
+msgid "Max Input Vars Exceeded"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:278
+msgid "Menu/Form too large. Increase max_input_vars in php.ini."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:284
+msgid "File Write Permission"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:288
+msgid "Server cannot write to file/folder. Check chmod/chown settings."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:294
+msgid "Missing File"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:298
+msgid "Verify file path and ensure plugin/theme files exist."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:304
+msgid "Upload Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:308
+msgid "Failed to move uploaded file. Check upload_tmp_dir or permissions."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:313
+msgid "WordPress Critical Error"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:317
+msgid "Enable WP_DEBUG to view detailed error logs."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:323
+msgid "Nonce Verification Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:327
+msgid "Nonce may be expired or invalid. Refresh the page and retry."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:333
+msgid "Database Connection Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:337
+msgid "Verify DB credentials in wp-config.php and check MySQL service."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:343
+msgid "Plugin Activation Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:347
+msgid "Review stack trace to identify incompatible code or PHP version mismatch."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:353
+msgid "PHP 8 Compatibility Issue"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:357
+msgid "Update plugin or fix function signature for PHP 8 compatibility."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:363
+msgid "REST Permission Denied"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:367
+msgid "Check REST permission_callback and current_user_can logic."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:373
+msgid "Block Validation Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:377
+msgid "Block markup may differ from saved content. Check custom block rendering."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:383
+msgid "WP Cron Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:387
+msgid "Ensure WP-Cron is enabled or configure a real server cron job."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:397
+msgid "Plugin may not have created required tables. Try reactivating it."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:403
+msgid "Multisite Misconfiguration"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:407
+msgid "Verify multisite constants in wp-config.php."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:413
+msgid "Imagick Processing Failure"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:417
+msgid "Ensure Imagick extension is installed and enabled."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:423
+msgid "Headers Already Sent"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:427
+msgid "Remove whitespace before <?php or after closing ?> tags."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:433
+msgid "SSL Certificate Error"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:437
+msgid "Verify SSL certificate chain and hosting configuration."
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:475
+msgid "Unclassified"
+msgstr ""
+
+#: src/Intelligence/ErrorClassifier.php:479
+msgid "Review stack trace and recent changes."
+msgstr ""

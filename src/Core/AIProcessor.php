@@ -30,7 +30,7 @@ class AIProcessor {
 		$provider = Settings::get( 'ai_provider', 'gemini' );
 
 		if ( ! $enabled ) {
-			return new \WP_Error( 'ai_disabled', 'AI is not enabled in settings.' );
+			return new \WP_Error( 'ai_disabled', __( 'AI is not enabled in settings.', 'bugsneak' ) );
 		}
 
 		if ( 'openai' === $provider ) {
@@ -51,7 +51,7 @@ class AIProcessor {
 		$model   = Settings::get( 'ai_gemini_model', 'gemini-2.0-flash' );
 
 		if ( empty( $api_key ) ) {
-			return new \WP_Error( 'ai_missing_key', 'Gemini API key is missing.' );
+			return new \WP_Error( 'ai_missing_key', __( 'Gemini API key is missing.', 'bugsneak' ) );
 		}
 
 		$url      = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$api_key}";
@@ -79,10 +79,10 @@ class AIProcessor {
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( ! empty( $body['error'] ) ) {
-			return new \WP_Error( 'ai_api_error', $body['error']['message'] ?? 'Gemini API returned an error.' );
+			return new \WP_Error( 'ai_api_error', $body['error']['message'] ?? __( 'Gemini API returned an error.', 'bugsneak' ) );
 		}
 
-		return $body['candidates'][0]['content']['parts'][0]['text'] ?? new \WP_Error( 'ai_empty', 'Gemini returned an empty response.' );
+		return $body['candidates'][0]['content']['parts'][0]['text'] ?? new \WP_Error( 'ai_empty', __( 'Gemini returned an empty response.', 'bugsneak' ) );
 	}
 
 	/**
@@ -96,7 +96,7 @@ class AIProcessor {
 		$model   = Settings::get( 'ai_openai_model', 'gpt-4o-mini' );
 
 		if ( empty( $api_key ) ) {
-			return new \WP_Error( 'ai_missing_key', 'OpenAI API key is missing.' );
+			return new \WP_Error( 'ai_missing_key', __( 'OpenAI API key is missing.', 'bugsneak' ) );
 		}
 
 		$prompt   = self::build_prompt( $log );
@@ -134,10 +134,10 @@ class AIProcessor {
 
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 		if ( ! empty( $body['error'] ) ) {
-			return new \WP_Error( 'ai_api_error', $body['error']['message'] ?? 'OpenAI API returned an error.' );
+			return new \WP_Error( 'ai_api_error', $body['error']['message'] ?? __( 'OpenAI API returned an error.', 'bugsneak' ) );
 		}
 
-		return $body['choices'][0]['message']['content'] ?? new \WP_Error( 'ai_empty', 'OpenAI returned an empty response.' );
+		return $body['choices'][0]['message']['content'] ?? new \WP_Error( 'ai_empty', __( 'OpenAI returned an empty response.', 'bugsneak' ) );
 	}
 
 	/**

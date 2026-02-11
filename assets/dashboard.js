@@ -130,7 +130,7 @@ const App = () => {
                 const nextLog = filteredLogs[index + 1] || filteredLogs[index - 1] || null;
                 setActiveLog(nextLog);
             }
-        } catch (err) { console.error('Status update failed', err); }
+        } catch (err) { console.error(window.bugsneakData?.i18n?.update_failed || 'Status update failed', err); }
     };
 
     const refreshLogs = async () => {
@@ -139,7 +139,7 @@ const App = () => {
             const data = await apiFetch({ path: '/bugsneak/v1/logs' });
             setLogs(data);
             if (!activeLog && data.length > 0) setActiveLog(data.find(l => !l.status || l.status === 'open') || null);
-        } catch (err) { console.error('Failed to fetch logs', err); }
+        } catch (err) { console.error(window.bugsneakData?.i18n?.fetch_failed || 'Failed to fetch logs', err); }
         finally { setLoading(false); }
     };
 
@@ -152,7 +152,7 @@ const App = () => {
         el(Header, { search, setSearch, loading, onRefresh: refreshLogs, isDark, toggleTheme: () => setIsDark(!isDark), settingsUrl }),
         el('div', { className: 'flex flex-1 overflow-hidden' }, [
             el(Aside, { logs: filteredLogs, activeLog, setActiveLog, filter, setFilter }),
-            el(Main, { activeLog, env, setLogStatus, isDark })
+            el(Main, { activeLog, env, setLogStatus, isDark, i18n: window.bugsneakData?.i18n })
         ])
     ]);
 };
@@ -186,7 +186,7 @@ const Header = ({ search, setSearch, loading, onRefresh, isDark, toggleTheme, se
                 ),
                 el('input', {
                     className: 'block w-full pl-3 pr-10 py-2 border border-[var(--tl-border)] rounded-lg bg-[var(--tl-input-bg)] text-sm text-[var(--tl-text)] placeholder-[var(--tl-text-faint)] focus:ring-2 focus:ring-[var(--tl-primary)]/40 focus:border-[var(--tl-primary)] transition-all outline-none',
-                    placeholder: 'Search errors...', type: 'text', value: search,
+                    placeholder: window.bugsneakData?.i18n?.search_placeholder || 'Search errors...', type: 'text', value: search,
                     onChange: (e) => setSearch(e.target.value)
                 })
             ])
@@ -194,15 +194,15 @@ const Header = ({ search, setSearch, loading, onRefresh, isDark, toggleTheme, se
         el('div', { className: 'flex items-center gap-0.5' }, [
             el('button', { onClick: onRefresh, className: 'p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-colors rounded-lg hover:bg-[var(--tl-surface-hover)]' },
                 el('span', { className: `material-icons text-[20px] ${loading ? 'animate-spin' : ''}` }, 'refresh')),
-            el('button', { onClick: toggleTheme, className: 'p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-all rounded-lg hover:bg-[var(--tl-surface-hover)]', title: isDark ? 'Light Mode' : 'Dark Mode' },
+            el('button', { onClick: toggleTheme, className: 'p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-all rounded-lg hover:bg-[var(--tl-surface-hover)]', title: isDark ? (window.bugsneakData?.i18n?.light_mode || 'Light Mode') : (window.bugsneakData?.i18n?.dark_mode || 'Dark Mode') },
                 el('span', { className: 'material-icons text-[20px]' }, isDark ? 'light_mode' : 'dark_mode')),
             el('div', { className: 'h-5 w-px bg-[var(--tl-border)] mx-1' }),
             el('a', { href: settingsUrl, className: 'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[var(--tl-text-muted)] hover:bg-[var(--tl-surface-hover)] hover:text-[var(--tl-text)] transition-all group no-underline' }, [
                 el('span', { className: 'material-icons text-[18px]' }, 'settings'),
-                el('span', { className: 'text-[11px] font-semibold uppercase tracking-wider hidden lg:block' }, 'Settings')
+                el('span', { className: 'text-[11px] font-semibold uppercase tracking-wider hidden lg:block' }, window.bugsneakData?.i18n?.settings || 'Settings')
             ]),
-            el(NavButton, { label: 'Docs', icon: 'description' }),
-            el(NavButton, { label: 'Help', icon: 'help_outline' })
+            el(NavButton, { label: window.bugsneakData?.i18n?.docs || 'Docs', icon: 'description' }),
+            el(NavButton, { label: window.bugsneakData?.i18n?.help || 'Help', icon: 'help_outline' })
         ])
     ])
 );
@@ -220,12 +220,12 @@ const Aside = ({ logs, activeLog, setActiveLog, filter, setFilter }) => (
     el('aside', { className: 'w-80 lg:w-96 border-r border-[var(--tl-border)] bg-[var(--tl-surface)] flex flex-col shrink-0' }, [
         el('div', { className: 'p-3 border-b border-[var(--tl-border)] shrink-0' },
             el('div', { className: 'flex gap-1.5' }, ['all', 'fatal', 'warning'].map(f =>
-                el('button', { key: f, onClick: () => setFilter(f), className: `px-3 py-1.5 text-[11px] font-semibold rounded-md transition-all capitalize ${filter === f ? 'bg-[var(--tl-primary)] text-white shadow-md' : 'text-[var(--tl-text-muted)] hover:bg-[var(--tl-surface-hover)] hover:text-[var(--tl-text)]'}` }, f)
+                el('button', { key: f, onClick: () => setFilter(f), className: `px-3 py-1.5 text-[11px] font-semibold rounded-md transition-all capitalize ${filter === f ? 'bg-[var(--tl-primary)] text-white shadow-md' : 'text-[var(--tl-text-muted)] hover:bg-[var(--tl-surface-hover)] hover:text-[var(--tl-text)]'}` }, window.bugsneakData?.i18n?.[f] || f)
             ))
         ),
         el('div', { className: 'flex-1 overflow-y-auto custom-scrollbar p-2.5 space-y-2 bg-[var(--tl-surface-alt)]' },
             logs.length === 0
-                ? el('div', { className: 'p-8 text-center text-[var(--tl-text-faint)]' }, 'No errors found')
+                ? el('div', { className: 'p-8 text-center text-[var(--tl-text-faint)]' }, window.bugsneakData?.i18n?.no_errors || 'No errors found')
                 : logs.map(log => el(LogCard, { key: log.id, log, isActive: activeLog?.id === log.id, onClick: () => setActiveLog(log) }))
         )
     ])
@@ -237,7 +237,7 @@ const LogCard = ({ log, isActive, onClick }) => {
     return el('div', { onClick, className: `group rounded-lg border p-3 cursor-pointer transition-all duration-200 ${isActive ? 'bg-[var(--tl-surface)] border-[var(--tl-primary)] shadow-lg ring-1 ring-[var(--tl-primary-glow)]' : 'bg-[var(--tl-surface)] border-[var(--tl-border)] hover:border-[var(--tl-border-hover)] hover:shadow-md opacity-80 hover:opacity-100'}` }, [
         el('div', { className: 'flex items-center justify-between mb-2' }, [
             el('span', { className: `inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border ${b}` }, log.error_type),
-            el('span', { className: 'text-[10px] font-mono text-[var(--tl-text-faint)]' }, log.occurrence_count > 1 ? `${log.occurrence_count}x` : 'new')
+            el('span', { className: 'text-[10px] font-mono text-[var(--tl-text-faint)]' }, log.occurrence_count > 1 ? `${log.occurrence_count}x` : (window.bugsneakData?.i18n?.occurrence_new || 'new'))
         ]),
         el('h3', { className: `text-[13px] font-semibold leading-snug mb-2 line-clamp-2 transition-colors ${isActive ? 'text-[var(--tl-text)]' : 'text-[var(--tl-text-secondary)] group-hover:text-[var(--tl-text)]'}` }, log.error_message),
         el('div', { className: 'flex items-center gap-2 text-[10px] text-[var(--tl-text-faint)] font-mono truncate' }, [
@@ -258,7 +258,7 @@ const Main = ({ activeLog, env, setLogStatus }) => {
 
     if (!activeLog) return el('main', { className: 'flex-1 flex flex-col items-center justify-center text-[var(--tl-text-faint)]' }, [
         el('span', { className: 'material-icons text-5xl mb-3 opacity-40' }, 'bug_report'),
-        el('p', { className: 'text-sm font-medium' }, 'Select an error to begin diagnostic')
+        el('p', { className: 'text-sm font-medium' }, window.bugsneakData?.i18n?.select_error || 'Select an error to begin diagnostic')
     ]);
 
     const requestContext = activeLog.request_context ? JSON.parse(activeLog.request_context) : {};
@@ -273,7 +273,7 @@ const Main = ({ activeLog, env, setLogStatus }) => {
             setAiResult(prev => ({ ...prev, [activeLog.id]: { text: data.insight, error: false } }));
         } catch (err) {
             console.error('AI Analysis failed', err);
-            const msg = err.message || 'AI Analysis failed. Please check your API key and connection.';
+            const msg = err.message || (window.bugsneakData?.i18n?.fetch_failed || 'AI Analysis failed. Please check your API key and connection.');
             setAiResult(prev => ({ ...prev, [activeLog.id]: { text: msg, error: true } }));
         } finally {
             setAiLoading(false);
@@ -297,17 +297,17 @@ const Main = ({ activeLog, env, setLogStatus }) => {
                     ])
                 ]),
                 el('div', { className: 'flex gap-2 shrink-0' }, [
-                    el('button', { onClick: () => setLogStatus(activeLog.id, 'ignored'), className: 'px-3 py-1.5 text-[11px] font-semibold text-[var(--tl-text-muted)] hover:text-[var(--tl-text)] hover:bg-[var(--tl-surface-hover)] rounded-lg transition-all uppercase tracking-wider' }, 'Ignore'),
+                    el('button', { onClick: () => setLogStatus(activeLog.id, 'ignored'), className: 'px-3 py-1.5 text-[11px] font-semibold text-[var(--tl-text-muted)] hover:text-[var(--tl-text)] hover:bg-[var(--tl-surface-hover)] rounded-lg transition-all uppercase tracking-wider' }, window.bugsneakData?.i18n?.ignore || 'Ignore'),
                     el('button', { onClick: () => setLogStatus(activeLog.id, 'resolved'), className: 'px-3 py-1.5 bg-[var(--tl-primary)] text-white text-[11px] font-semibold rounded-lg hover:bg-[var(--tl-primary-hover)] transition-all shadow-lg flex items-center gap-1.5 uppercase tracking-wider' }, [
-                        el('span', { className: 'material-icons text-[14px]' }, 'check_circle'), 'Resolve'
+                        el('span', { className: 'material-icons text-[14px]' }, 'check_circle'), window.bugsneakData?.i18n?.resolve || 'Resolve'
                     ])
                 ])
             ]),
             el('div', { className: 'flex gap-1 border-b border-[var(--tl-border)]' }, [
-                el(TabButton, { id: 'stack', label: 'Stack Trace', icon: 'code', isActive: activeTab === 'stack', onClick: setActiveTab }),
-                el(TabButton, { id: 'context', label: 'Context', icon: 'person', isActive: activeTab === 'context', onClick: setActiveTab }),
-                el(TabButton, { id: 'request', label: 'Request', icon: 'http', isActive: activeTab === 'request', onClick: setActiveTab }),
-                el(TabButton, { id: 'env', label: 'Environment', icon: 'dns', isActive: activeTab === 'env', onClick: setActiveTab }),
+                el(TabButton, { id: 'stack', label: window.bugsneakData?.i18n?.stack_trace || 'Stack Trace', icon: 'code', isActive: activeTab === 'stack', onClick: setActiveTab }),
+                el(TabButton, { id: 'context', label: window.bugsneakData?.i18n?.context || 'Context', icon: 'person', isActive: activeTab === 'context', onClick: setActiveTab }),
+                el(TabButton, { id: 'request', label: window.bugsneakData?.i18n?.request || 'Request', icon: 'http', isActive: activeTab === 'request', onClick: setActiveTab }),
+                el(TabButton, { id: 'env', label: window.bugsneakData?.i18n?.env || 'Environment', icon: 'dns', isActive: activeTab === 'env', onClick: setActiveTab }),
             ])
         ]),
         el('div', { className: 'flex-1 overflow-auto p-6 custom-scrollbar' }, [
@@ -338,9 +338,9 @@ const Main = ({ activeLog, env, setLogStatus }) => {
             activeTab === 'env' && el(EnvironmentPanel, { env, activeLog })
         ]),
         el('div', { className: 'px-6 py-2.5 bg-[var(--tl-surface)] border-t border-[var(--tl-border)] flex justify-between items-center shrink-0' }, [
-            el('div', { className: 'text-[11px] font-medium text-[var(--tl-text-faint)] tracking-wide' }, 'Telemetry: 100% Local · No External Calls'),
-            el('button', { onClick: () => { navigator.clipboard.writeText(JSON.stringify({ activeLog, env }, null, 2)); alert('Copied!'); }, className: 'px-3 py-1.5 bg-[var(--tl-surface-hover)] hover:bg-[var(--tl-border-hover)] text-[var(--tl-text-secondary)] text-[11px] font-semibold rounded-lg transition-all flex items-center gap-1.5' }, [
-                el('span', { className: 'material-icons text-[14px]' }, 'content_paste'), 'Copy Bundle'
+            el('div', { className: 'text-[11px] font-medium text-[var(--tl-text-faint)] tracking-wide' }, window.bugsneakData?.i18n?.telemetry_notice || 'Telemetry: 100% Local · No External Calls'),
+            el('button', { onClick: () => { navigator.clipboard.writeText(JSON.stringify({ activeLog, env }, null, 2)); alert(window.bugsneakData?.i18n?.copied || 'Copied!'); }, className: 'px-3 py-1.5 bg-[var(--tl-surface-hover)] hover:bg-[var(--tl-border-hover)] text-[var(--tl-text-secondary)] text-[11px] font-semibold rounded-lg transition-all flex items-center gap-1.5' }, [
+                el('span', { className: 'material-icons text-[14px]' }, 'content_paste'), window.bugsneakData?.i18n?.copy_bundle || 'Copy Bundle'
             ])
         ])
     ]);
@@ -367,7 +367,7 @@ const RequestTable = ({ title, data }) => {
     return el('div', { className: 'bg-[var(--tl-surface)] border border-[var(--tl-border)] rounded-lg overflow-hidden' }, [
         el('div', { className: 'px-4 py-2 border-b border-[var(--tl-border)] text-[10px] font-bold uppercase tracking-wider text-[var(--tl-text-faint)]' }, title),
         e.length === 0
-            ? el('div', { className: 'p-4 text-[12px] italic text-[var(--tl-text-faint)]' }, 'No data.')
+            ? el('div', { className: 'p-4 text-[12px] italic text-[var(--tl-text-faint)]' }, window.bugsneakData?.i18n?.no_data || 'No data.')
             : el('table', { className: 'w-full text-left border-collapse' }, el('tbody', null, e.map(([k, v]) =>
                 el('tr', { key: k, className: 'border-b border-[var(--tl-border)] last:border-0' }, [
                     el('td', { className: 'px-4 py-2.5 text-[11px] font-semibold text-[var(--tl-text-muted)] w-1/3' }, k),
@@ -394,7 +394,7 @@ const MarkdownContent = ({ content, error, fallback, isDark }) => {
 };
 
 const CodeViewer = ({ snippet }) => {
-    if (!snippet || !snippet.lines) return el('div', { className: 'p-4 text-[var(--tl-text-faint)] italic text-center text-sm' }, 'No code context');
+    if (!snippet || !snippet.lines) return el('div', { className: 'p-4 text-[var(--tl-text-faint)] italic text-center text-sm' }, window.bugsneakData?.i18n?.no_code || 'No code context');
     return el('div', { className: 'flex min-w-max' }, [
         el('div', { className: 'w-12 py-2 text-[var(--tl-code-line-num)] text-right pr-3 select-none flex flex-col border-r border-[var(--tl-border)] text-[11px] font-mono' },
             Object.keys(snippet.lines).map(n => el('div', { key: n, className: parseInt(n) === snippet.target ? 'text-white font-bold' : '' }, n))),
@@ -402,7 +402,7 @@ const CodeViewer = ({ snippet }) => {
             Object.entries(snippet.lines).map(([n, c]) => {
                 const t = parseInt(n) === snippet.target;
                 return el('div', { key: n, className: `px-4 w-full relative ${t ? 'bg-[rgba(239,68,68,0.15)] border-l-2 border-[#ef4444]' : ''}` }, [
-                    highlightLine(c), t && el('span', { className: 'text-[#fca5a5] italic ml-4 text-[10px]' }, '← error')
+                    highlightLine(c), t && el('span', { className: 'text-[#fca5a5] italic ml-4 text-[10px]' }, `← ${window.bugsneakData?.i18n?.error_here || 'error'}`)
                 ]);
             }))
     ]);
@@ -442,17 +442,17 @@ const IntelligencePanel = ({ activeLog, aiResult, aiLoading, runAIAnalysis, aiEn
     const s = hasClassification ? (severityMap[classification.severity] || severityMap['unknown']) : severityMap['unknown'];
     const confidence = classification?.confidence || 0;
 
-    let confidenceBadge = { text: 'Low Confidence', className: 'text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' };
-    if (confidence >= 90) confidenceBadge = { text: 'High Confidence', className: 'text-emerald-500 bg-emerald-500/10' };
-    else if (confidence >= 70) confidenceBadge = { text: 'Medium Confidence', className: 'text-amber-500 bg-amber-500/10' };
+    let confidenceBadge = { text: window.bugsneakData?.i18n?.confidence_low || 'Low Confidence', className: 'text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' };
+    if (confidence >= 90) confidenceBadge = { text: window.bugsneakData?.i18n?.confidence_high || 'High Confidence', className: 'text-emerald-500 bg-emerald-500/10' };
+    else if (confidence >= 70) confidenceBadge = { text: window.bugsneakData?.i18n?.confidence_medium || 'Medium Confidence', className: 'text-amber-500 bg-amber-500/10' };
 
     return el('div', { className: 'space-y-3 mb-4' }, [
         // Spike Warning
         isSpike && el('div', { className: 'flex items-center gap-2 p-2.5 bg-[var(--tl-danger-bg)] text-[var(--tl-danger-text)] rounded-lg border border-[var(--tl-badge-fatal-border)] animate-pulse' }, [
             el('span', { className: 'material-icons text-[18px]' }, 'local_fire_department'),
             el('div', null, [
-                el('strong', { className: 'block text-[11px] uppercase tracking-wider' }, 'Abnormal Spike Detected'),
-                el('span', { className: 'text-[11px]' }, 'Error rate allows this to be classified as a spike.')
+                el('strong', { className: 'block text-[11px] uppercase tracking-wider' }, window.bugsneakData?.i18n?.spike_detected || 'Abnormal Spike Detected'),
+                el('span', { className: 'text-[11px]' }, window.bugsneakData?.i18n?.spike_desc || 'Error rate allows this to be classified as a spike.')
             ])
         ]),
 
@@ -472,14 +472,14 @@ const IntelligencePanel = ({ activeLog, aiResult, aiLoading, runAIAnalysis, aiEn
                         el('h3', {
                             className: 'text-[11px] font-bold uppercase tracking-wider',
                             style: { color: s.text }
-                        }, hasClassification ? classification.category : (activeLog.culprit ? activeLog.culprit.split(':').pop().trim() : 'Unknown Source'))
+                        }, hasClassification ? classification.category : (activeLog.culprit ? activeLog.culprit.split(':').pop().trim() : (window.bugsneakData?.i18n?.unknown_source || 'Unknown Source')))
                     ]),
                     hasClassification
                         ? el('span', { className: `px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${confidenceBadge.className}` }, confidenceBadge.text)
-                        : el('span', { className: 'px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' }, activeLog.culprit ? activeLog.culprit.split(':')[0] : 'System')
+                        : el('span', { className: 'px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider text-[var(--tl-text-muted)] bg-[var(--tl-surface-alt)]' }, activeLog.culprit ? activeLog.culprit.split(':')[0] : (window.bugsneakData?.i18n?.system || 'System'))
                 ]),
                 el('p', { className: 'text-[12px] font-medium leading-relaxed mb-2', style: { color: 'var(--tl-text)' } },
-                    hasClassification ? classification.suggestion : `Error originated from ${activeLog.culprit || 'an unknown source'}.`
+                    hasClassification ? classification.suggestion : (window.bugsneakData?.i18n?.unknown_source_msg || `Error originated from ${activeLog.culprit || 'an unknown source'}.`)
                 ),
                 hasClassification && el('div', { className: 'flex flex-wrap gap-1 relative z-10' },
                     (classification.tags || []).map(tag => el('span', {
@@ -500,14 +500,14 @@ const IntelligencePanel = ({ activeLog, aiResult, aiLoading, runAIAnalysis, aiEn
                     el('div', { className: 'flex items-center gap-2' }, [
                         el('span', { className: 'material-icons text-[var(--tl-primary-light)] text-[16px]' }, 'auto_fix_high'),
                         el('h3', { className: 'text-[11px] font-bold text-[var(--tl-primary-light)] uppercase tracking-wider' },
-                            currentAiInsight ? `BugSneak AI Insight (${aiProvider})` : 'BugSneak AI Insight'
+                            currentAiInsight ? (window.bugsneakData?.i18n?.ai_insight_labeled || 'BugSneak AI Insight (%s)').replace('%s', aiProvider) : (window.bugsneakData?.i18n?.ai_insight || 'BugSneak AI Insight')
                         )
                     ]),
-                    aiEnabled && !currentAiInsight && el('button', {
+                    hasClassification && !currentAiInsight && el('button', {
                         onClick: runAIAnalysis,
                         disabled: aiLoading,
                         className: 'px-2.5 py-1 bg-[var(--tl-primary)] text-white text-[10px] font-bold rounded uppercase tracking-wider hover:opacity-90 disabled:opacity-50 transition-all shadow-sm'
-                    }, aiLoading ? 'Analyzing...' : 'Deep Dive Analysis')
+                    }, aiLoading ? (window.bugsneakData?.i18n?.analyzing || 'Analyzing...') : (window.bugsneakData?.i18n?.deep_dive || 'Deep Dive Analysis'))
                 ]),
 
                 // Content Area
@@ -516,13 +516,13 @@ const IntelligencePanel = ({ activeLog, aiResult, aiLoading, runAIAnalysis, aiEn
                         el(MarkdownContent, {
                             content: currentAiInsight ? currentAiInsight.text : '',
                             error: currentAiInsight?.error,
-                            fallback: aiLoading ? 'Generating insight...' : '',
+                            fallback: aiLoading ? (window.bugsneakData?.i18n?.generating || 'Generating insight...') : '',
                             isDark
                         })
                     )
                     :
                     el('p', { className: 'text-[11px] text-[var(--tl-text-faint)] italic' },
-                        'Run a deep dive analysis to get code snippets, solutions, and architectural advice from the AI engine.'
+                        window.bugsneakData?.i18n?.ai_prompt || 'Run a deep dive analysis to get code snippets, solutions, and architectural advice from the AI engine.'
                     )
             ])
         ])

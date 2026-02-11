@@ -177,7 +177,7 @@ class RestController {
 	public function save_settings( $request ) {
 		$body = $request->get_json_params();
 		if ( empty( $body ) ) {
-			return new \WP_Error( 'invalid_body', 'No settings provided.', array( 'status' => 400 ) );
+			return new \WP_Error( 'invalid_body', __( 'No settings provided.', 'bugsneak' ), array( 'status' => 400 ) );
 		}
 
 		$saved = \BugSneak\Admin\Settings::save( $body );
@@ -217,7 +217,7 @@ class RestController {
 		$log = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $table, $id ), ARRAY_A );
 
 		if ( ! $log ) {
-			return new \WP_Error( 'not_found', 'Log entry not found.', array( 'status' => 404 ) );
+			return new \WP_Error( 'not_found', __( 'Log entry not found.', 'bugsneak' ), array( 'status' => 404 ) );
 		}
 
 		$insight = \BugSneak\Core\AIProcessor::analyze( $log );
@@ -245,7 +245,7 @@ class RestController {
 		$table  = $wpdb->prefix . 'bugsneak_logs';
 
 		if ( ! in_array( $status, array( 'open', 'resolved', 'ignored' ), true ) ) {
-			return new \WP_Error( 'invalid_status', 'Invalid status provided.', array( 'status' => 400 ) );
+			return new \WP_Error( 'invalid_status', __( 'Invalid status provided.', 'bugsneak' ), array( 'status' => 400 ) );
 		}
 
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom log status update

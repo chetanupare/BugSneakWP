@@ -74,15 +74,15 @@ class DashboardController {
 	 */
 	public function register_pages() {
 		add_management_page(
-			'BugSneak',
-			'BugSneak',
+			__( 'BugSneak', 'bugsneak' ),
+			__( 'BugSneak', 'bugsneak' ),
 			'manage_options',
 			'bugsneak',
 			array( $this, 'render_dashboard' )
 		);
 
 		add_management_page(
-			'BugSneak Settings',
+			__( 'BugSneak Settings', 'bugsneak' ),
 			'', // Hidden from menu - accessed via dashboard link.
 			'manage_options',
 			'bugsneak-settings',
@@ -180,6 +180,7 @@ class DashboardController {
 					'logo_text'   => BUGSNEAK_URL . 'logo-text-new.svg',
 					'ai_enabled'  => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
 					'ai_provider' => \BugSneak\Admin\Settings::get( 'ai_provider', 'gemini' ),
+					'i18n'        => I18n::get_dashboard_strings(),
 				)
 			);
 		}
@@ -197,6 +198,7 @@ class DashboardController {
 					'logo_light'   => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_dark'    => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_text'    => BUGSNEAK_URL . 'logo-text-new.svg',
+					'i18n'         => I18n::get_settings_strings(),
 				)
 			);
 		}
