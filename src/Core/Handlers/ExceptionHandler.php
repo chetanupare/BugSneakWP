@@ -1,0 +1,58 @@
+<?php
+/**
+ * Exception Handler for BugSneak.
+ *
+ * @package BugSneak\Core\Handlers
+ */
+
+namespace BugSneak\Core\Handlers;
+
+use BugSneak\Core\Engine;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class ExceptionHandler
+ */
+class ExceptionHandler {
+
+	/**
+	 * @var Engine
+	 */
+	private $engine;
+
+	/**
+	 * ExceptionHandler constructor.
+	 *
+	 * @param Engine $engine Core engine instance.
+	 */
+	public function __construct( Engine $engine ) {
+		$this->engine = $engine;
+		set_exception_handler( [ $this, 'handle' ] );
+	}
+
+	/**
+	 * Handle uncaught exceptions.
+	 *
+	 * @param \Throwable $exception The exception object.
+	 */
+	public function handle( $exception ) {
+		$this->engine->log_error(
+			get_class( $exception ),
+			$exception->getMessage(),
+			$exception->getFile(),
+			$exception->getLine(),
+			$exception->getTrace()
+		);
+
+		// Render the beautiful diagnostic overlay for front-end crashes.
+		$this->engine->render_overlay( [
+			'type'    => 'Uncaught Exception',
+			'message' => $exception->getMessage(),
+			'file'    => $exception->getFile(),
+			'line'    => $exception->getLine()
+		] );
+	}
+}

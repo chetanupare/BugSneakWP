@@ -1,0 +1,184 @@
+<?php
+/**
+ * Admin Dashboard Controller for BugSneak.
+ *
+ * @package BugSneak\Admin
+ */
+
+namespace BugSneak\Admin;
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Class DashboardController
+ */
+class DashboardController {
+
+	/**
+	 * @var DashboardController|null
+	 */
+	private static $instance = null;
+
+	/**
+	 * @return DashboardController
+	 */
+	public static function get_instance() {
+		if ( null === self::$instance ) {
+			self::$instance = new self();
+		}
+		return self::$instance;
+	}
+
+	private function __construct() {
+		add_action( 'admin_menu', [ $this, 'register_menu' ] );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+	}
+
+	/**
+	 * Register menu pages.
+	 */
+	public function register_menu() {
+		add_management_page(
+			'BugSneak',
+			'BugSneak',
+			'manage_options',
+			'bugsneak',
+			[ $this, 'render_dashboard' ]
+		);
+
+		add_management_page(
+			'BugSneak Settings',
+			'', // Hidden from menu — accessed via dashboard link
+			'manage_options',
+			'bugsneak-settings',
+			[ $this, 'render_settings' ]
+		);
+	}
+
+	/**
+	 * Enqueue assets based on current page.
+	 *
+	 * @param string $hook Admin page hook.
+	 */
+	public function enqueue_assets( $hook ) {
+		$is_dashboard = ( 'tools_page_bugsneak' === $hook );
+		$is_settings  = ( 'tools_page_bugsneak-settings' === $hook );
+
+		if ( ! $is_dashboard && ! $is_settings ) {
+			return;
+		}
+
+		// Shared dependencies.
+		wp_enqueue_style( 'dashicons' );
+		wp_enqueue_script( 'wp-element' );
+		wp_enqueue_script( 'wp-api-fetch' );
+
+		wp_enqueue_style( 'bugsneak-inter', BUGSNEAK_URL . 'assets/vendor/inter.css', [], BUGSNEAK_VERSION );
+		wp_enqueue_style( 'bugsneak-material-icons', BUGSNEAK_URL . 'assets/vendor/material-icons.css', [], BUGSNEAK_VERSION );
+
+		wp_enqueue_script( 'bugsneak-marked', BUGSNEAK_URL . 'assets/vendor/marked.min.js', [], '12.0.0', false );
+		wp_enqueue_script( 'bugsneak-tailwind', BUGSNEAK_URL . 'assets/vendor/tailwindcss.js', [], BUGSNEAK_VERSION, false );
+		wp_add_inline_script( 'bugsneak-tailwind', "
+			tailwind.config = {
+				darkMode: 'class',
+				theme: {
+					extend: {
+						colors: {
+							'primary': '#6366f1', 'primary-light': '#818cf8', 'primary-dark': '#4f46e5',
+							'secondary': '#22d3ee',
+							'background-light': '#f8fafc', 'background-dark': '#0f172a',
+							'surface-light': '#ffffff', 'surface-dark': '#1e293b',
+							'danger': '#ef4444', 'warning': '#f59e0b', 'success': '#10b981',
+							'text-main': '#f8fafc', 'text-muted': '#94a3b8',
+						},
+						fontFamily: {
+							'display': ['Inter', 'sans-serif'],
+							'mono': ['JetBrains Mono', 'monospace'],
+						},
+					},
+				},
+			}
+		" );
+
+		wp_enqueue_style( 'bugsneak-dashboard-css', BUGSNEAK_URL . 'assets/dashboard.css', [], BUGSNEAK_VERSION );
+
+		if ( $is_dashboard ) {
+			wp_enqueue_script( 'bugsneak-dashboard-app', BUGSNEAK_URL . 'assets/dashboard.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION, true );
+			wp_localize_script(
+				'bugsneak-dashboard-app',
+				'bugsneakData',
+				[
+					'root'        => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
+					'nonce'       => wp_create_nonce( 'wp_rest' ),
+					'logs'        => \BugSneak\Database\Schema::get_logs( 50 ),
+					'settingsUrl' => admin_url( 'tools.php?page=bugsneak-settings' ),
+					'env'         => [
+						'php_version'  => PHP_VERSION,
+						'wp_version'   => $GLOBALS['wp_version'],
+						'memory_limit' => ini_get( 'memory_limit' ),
+						'server_os'    => php_uname( 's' ) . ' ' . php_uname( 'r' ),
+						'theme'        => wp_get_theme()->get( 'Name' ),
+					],
+					'logo_light' => BUGSNEAK_URL . 'logo-light.png',
+					'logo_dark'  => BUGSNEAK_URL . 'logo-dark.png',
+					'logo_text'  => BUGSNEAK_URL . 'logo-text.svg',
+					'ai_enabled' => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
+					'ai_provider'=> \BugSneak\Admin\Settings::get( 'ai_provider', 'gemini' ),
+				]
+			);
+		}
+
+		if ( $is_settings ) {
+			wp_enqueue_script( 'bugsneak-settings-app', BUGSNEAK_URL . 'assets/settings.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION, true );
+			wp_localize_script(
+				'bugsneak-settings-app',
+				'bugsneakSettingsData',
+				[
+					'root'         => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
+					'nonce'        => wp_create_nonce( 'wp_rest' ),
+					'dashboardUrl' => admin_url( 'tools.php?page=bugsneak' ),
+					'logo_light'   => BUGSNEAK_URL . 'logo-light.png',
+					'logo_dark'    => BUGSNEAK_URL . 'logo-dark.png',
+					'logo_text'    => BUGSNEAK_URL . 'logo-text.svg',
+				]
+			);
+		}
+	}
+
+	/**
+	 * Render the Dashboard page.
+	 */
+	public function render_dashboard() {
+		$this->render_full_page_shell( 'bugsneak-app' );
+	}
+
+	/**
+	 * Render the Settings page.
+	 */
+	public function render_settings() {
+		$this->render_full_page_shell( 'bugsneak-settings-app' );
+	}
+
+	/**
+	 * Render the full-page WP admin shell.
+	 *
+	 * @param string $root_id The React root element ID.
+	 */
+	private function render_full_page_shell( $root_id ) {
+		?>
+		<style>
+			html, body, #wpwrapper { height: 100vh !important; overflow: hidden !important; }
+			#wpcontent { padding-left: 0 !important; height: 100vh !important; }
+			#wpbody { height: 100% !important; }
+			#wpbody-content { padding-bottom: 0 !important; float: none !important; width: auto !important; height: 100% !important; display: flex; flex-direction: column; overflow: hidden !important; }
+			#wpbody-content > *:not(#<?php echo esc_attr( $root_id ); ?>) { display: none !important; }
+			#<?php echo esc_attr( $root_id ); ?> { flex: 1 1 auto; width: 100%; margin: 0; padding: 0; min-height: 0; display: flex; flex-direction: column; }
+			#wpfooter { display: none !important; }
+			.notice, .updated, .error, .update-nag, .is-dismissible, .notice-dismiss { display: none !important; }
+		</style>
+		<div id="<?php echo esc_attr( $root_id ); ?>"></div>
+		<?php
+	}
+}
