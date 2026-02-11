@@ -104,3 +104,32 @@
     --text-primary: #f8fafc;
     --text-muted: #94a3b8;
 }
+
+/* ─── WP Admin Overrides ─────────────────────────────────────────────────── */
+
+/* Increase specificity to override WP default admin styles for inputs */
+#bugsneak-app input[type="text"],
+#bugsneak-settings-app input[type="text"],
+#bugsneak-app input[type="number"],
+#bugsneak-settings-app input[type="number"],
+#bugsneak-app select,
+#bugsneak-settings-app select {
+    box-shadow: none !important;
+    border-radius: 0.5rem !important;
+    /* rounded-lg */
+    margin: 0 !important;
+    max-width: none !important;
+    height: auto !important;
+}
+
+#bugsneak-app input:focus,
+#bugsneak-settings-app input:focus {
+    box-shadow: 0 0 0 2px var(--tl-primary-glow) !important;
+}
+
+/* Fix Material Icons specificity */
+.material-icons {
+    font-family: 'Material Icons' !important;
+    font-size: 20px;
+    vertical-align: middle;
+}
