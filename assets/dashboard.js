@@ -139,8 +139,8 @@ const Header = ({ search, setSearch, loading, onRefresh, isDark, toggleTheme, se
             ])
         ]),
         el('div', { className: 'flex items-center gap-0.5' }, [
-            el('button', { onClick: onRefresh, className: `p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-colors rounded-lg hover:bg-[var(--tl-surface-hover)] ${loading ? 'animate-spin' : ''}` },
-                el('span', { className: 'material-icons text-[20px]' }, 'refresh')),
+            el('button', { onClick: onRefresh, className: 'p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-colors rounded-lg hover:bg-[var(--tl-surface-hover)]' },
+                el('span', { className: `material-icons text-[20px] ${loading ? 'animate-spin' : ''}` }, 'refresh')),
             el('button', { onClick: toggleTheme, className: 'p-2 text-[var(--tl-text-muted)] hover:text-[var(--tl-primary)] transition-all rounded-lg hover:bg-[var(--tl-surface-hover)]', title: isDark ? 'Light Mode' : 'Dark Mode' },
                 el('span', { className: 'material-icons text-[20px]' }, isDark ? 'light_mode' : 'dark_mode')),
             el('div', { className: 'h-5 w-px bg-[var(--tl-border)] mx-1' }),
