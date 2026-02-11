@@ -3,7 +3,7 @@
 /* Layout is handled via DashboardController inline styles for maximum WP compatibility */
 
 .bugsneak-admin-page #wpfooter {
-    display: none;
+	display: none;
 }
 
 /* Hide WordPress UI Clutter on BugSneak pages */
@@ -11,98 +11,98 @@
 .bugsneak-admin-page .updated,
 .bugsneak-admin-page .error,
 .bugsneak-admin-page .is-dismissible {
-    display: none !important;
+	display: none !important;
 }
 
 /* Loader Styles */
 .bugsneak-loader-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    color: #94a3b8;
-    background: #0f172a;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	color: #94a3b8;
+	background: #0f172a;
 }
 
 .bugsneak-loader-container .dashicons {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 15px;
+	font-size: 40px;
+	width: 40px;
+	height: 40px;
+	margin-bottom: 15px;
 }
 
 .spin {
-    animation: bugsneak-spin 1s linear infinite;
+	animation: bugsneak-spin 1s linear infinite;
 }
 
 @keyframes bugsneak-spin {
-    100% {
-        transform: rotate(360deg);
-    }
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 /* Custom Scrollbar — Dark Theme */
 .custom-scrollbar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+	width: 6px;
+	height: 6px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
+	background: transparent;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background-color: #334155;
-    border-radius: 20px;
+	background-color: #334155;
+	border-radius: 20px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: #475569;
+	background-color: #475569;
 }
 
 /* Material Icons Fix */
 .material-icons,
 .material-icons-outlined {
-    font-family: 'Material Icons' !important;
+	font-family: 'Material Icons' !important;
 }
 
 /* Line Clamp Utility */
 .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
 }
 
 /* Settings Panel Slide-In */
 @keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
+	from {
+		transform: translateX(100%);
+		opacity: 0;
+	}
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+	to {
+		transform: translateX(0);
+		opacity: 1;
+	}
 }
 
 /* CSS Variables — Slate & Indigo Palette */
 :root {
-    --primary: #6366f1;
-    --primary-light: #818cf8;
-    --primary-dark: #4f46e5;
-    --secondary: #22d3ee;
-    --background: #0f172a;
-    --surface: #1e293b;
-    --border: #334155;
-    --danger: #ef4444;
-    --warning: #f59e0b;
-    --success: #10b981;
-    --text-primary: #f8fafc;
-    --text-muted: #94a3b8;
+	--primary: #6366f1;
+	--primary-light: #818cf8;
+	--primary-dark: #4f46e5;
+	--secondary: #22d3ee;
+	--background: #0f172a;
+	--surface: #1e293b;
+	--border: #334155;
+	--danger: #ef4444;
+	--warning: #f59e0b;
+	--success: #10b981;
+	--text-primary: #f8fafc;
+	--text-muted: #94a3b8;
 }
 
 /* ─── WP Admin Overrides ─────────────────────────────────────────────────── */
@@ -114,22 +114,22 @@
 #bugsneak-settings-app input[type="number"],
 #bugsneak-app select,
 #bugsneak-settings-app select {
-    box-shadow: none !important;
-    border-radius: 0.5rem !important;
-    /* rounded-lg */
-    margin: 0 !important;
-    max-width: none !important;
-    height: auto !important;
+	box-shadow: none !important;
+	border-radius: 0.5rem !important;
+	/* rounded-lg */
+	margin: 0 !important;
+	max-width: none !important;
+	height: auto !important;
 }
 
 #bugsneak-app input:focus,
 #bugsneak-settings-app input:focus {
-    box-shadow: 0 0 0 2px var(--tl-primary-glow) !important;
+	box-shadow: 0 0 0 2px var(--tl-primary-glow) !important;
 }
 
 /* Fix Material Icons specificity */
 .material-icons {
-    font-family: 'Material Icons' !important;
-    font-size: 20px;
-    vertical-align: middle;
+	font-family: 'Material Icons' !important;
+	font-size: 20px;
+	vertical-align: middle;
 }

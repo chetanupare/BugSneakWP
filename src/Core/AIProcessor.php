@@ -56,17 +56,22 @@ class AIProcessor {
 
 		$url      = "https://generativelanguage.googleapis.com/v1/models/{$model}:generateContent?key={$api_key}";
 		$prompt   = self::build_prompt( $log );
-		$response = wp_remote_post( $url, [
-			'headers' => [ 'Content-Type' => 'application/json' ],
-			'body'    => wp_json_encode( [
-				'contents' => [ [ 'parts' => [ [ 'text' => $prompt ] ] ] ],
-				'generationConfig' => [
-					'temperature'     => 0.2,
-					'maxOutputTokens' => 1024,
-				],
-			] ),
-			'timeout' => 30,
-		] );
+		$response = wp_remote_post(
+			$url,
+			array(
+				'headers' => array( 'Content-Type' => 'application/json' ),
+				'body'    => wp_json_encode(
+					array(
+						'contents'         => array( array( 'parts' => array( array( 'text' => $prompt ) ) ) ),
+						'generationConfig' => array(
+							'temperature'     => 0.2,
+							'maxOutputTokens' => 1024,
+						),
+					)
+				),
+				'timeout' => 30,
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -95,22 +100,33 @@ class AIProcessor {
 		}
 
 		$prompt   = self::build_prompt( $log );
-		$response = wp_remote_post( 'https://api.openai.com/v1/chat/completions', [
-			'headers' => [
-				'Content-Type'  => 'application/json',
-				'Authorization' => 'Bearer ' . $api_key,
-			],
-			'body'    => wp_json_encode( [
-				'model'    => $model,
-				'messages' => [
-					[ 'role' => 'system', 'content' => 'You are a senior WordPress expert. Analyze PHP errors and provide concise explanations and fixes.' ],
-					[ 'role' => 'user', 'content' => $prompt ],
-				],
-				'temperature' => 0.2,
-				'max_tokens'  => 1024,
-			] ),
-			'timeout' => 30,
-		] );
+		$response = wp_remote_post(
+			'https://api.openai.com/v1/chat/completions',
+			array(
+				'headers' => array(
+					'Content-Type'  => 'application/json',
+					'Authorization' => 'Bearer ' . $api_key,
+				),
+				'body'    => wp_json_encode(
+					array(
+						'model'       => $model,
+						'messages'    => array(
+							array(
+								'role'    => 'system',
+								'content' => 'You are a senior WordPress expert. Analyze PHP errors and provide concise explanations and fixes.',
+							),
+							array(
+								'role'    => 'user',
+								'content' => $prompt,
+							),
+						),
+						'temperature' => 0.2,
+						'max_tokens'  => 1024,
+					)
+				),
+				'timeout' => 30,
+			)
+		);
 
 		if ( is_wp_error( $response ) ) {
 			return $response;
@@ -137,13 +153,13 @@ class AIProcessor {
 		if ( ! empty( $snippet['lines'] ) ) {
 			$prompt .= "CODE CONTEXT:\n";
 			foreach ( $snippet['lines'] as $num => $line ) {
-				$mark = (int) $num === (int) $snippet['target'] ? '>>> ' : '    ';
+				$mark    = (int) $num === (int) $snippet['target'] ? '>>> ' : '    ';
 				$prompt .= "{$mark}{$num}: {$line}\n";
 			}
 			$prompt .= "\n";
 		}
 
-		$prompt .= "Analyze why this happened and provide a specific fix suggestion. Keep it concise and technical.";
+		$prompt .= 'Analyze why this happened and provide a specific fix suggestion. Keep it concise and technical.';
 		return $prompt;
 	}
 }

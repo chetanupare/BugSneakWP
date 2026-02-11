@@ -3,7 +3,7 @@ Contributors: chetanupare
 Tags: debug, error log, stack trace, fatal error, php error
 Requires at least: 6.2
 Tested up to: 6.9
-Stable tag: 1.3.5
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

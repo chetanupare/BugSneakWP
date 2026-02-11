@@ -27,7 +27,7 @@ define( 'TRACELINE_EARLY_LOADED', true );
 final class BugSneak_Early_Buffer {
 
 	/** @var array Captured errors waiting for the engine. */
-	private static $buffer = [];
+	private static $buffer = array();
 
 	/** @var bool Whether the engine has drained the buffer. */
 	private static $drained = false;
@@ -55,7 +55,7 @@ final class BugSneak_Early_Buffer {
 	public static function drain() {
 		self::$drained = true;
 		$errors        = self::$buffer;
-		self::$buffer  = [];
+		self::$buffer  = array();
 		return $errors;
 	}
 
@@ -88,13 +88,15 @@ $bugsneak_prev_error_handler = set_error_handler(
 			return false;
 		}
 
-		BugSneak_Early_Buffer::push( [
-			'handler' => 'error',
-			'errno'   => $errno,
-			'message' => $errstr,
-			'file'    => $errfile,
-			'line'    => $errline,
-		] );
+		BugSneak_Early_Buffer::push(
+			array(
+				'handler' => 'error',
+				'errno'   => $errno,
+				'message' => $errstr,
+				'file'    => $errfile,
+				'line'    => $errline,
+			)
+		);
 
 		if ( $bugsneak_prev_error_handler ) {
 			return call_user_func( $bugsneak_prev_error_handler, $errno, $errstr, $errfile, $errline );
@@ -116,14 +118,16 @@ $bugsneak_prev_exception_handler = set_exception_handler(
 			throw $exception; // Still throw to be safe.
 		}
 
-		BugSneak_Early_Buffer::push( [
-			'handler' => 'exception',
-			'class'   => get_class( $exception ),
-			'message' => $exception->getMessage(),
-			'file'    => $exception->getFile(),
-			'line'    => $exception->getLine(),
-			'trace'   => $exception->getTrace(),
-		] );
+		BugSneak_Early_Buffer::push(
+			array(
+				'handler' => 'exception',
+				'class'   => get_class( $exception ),
+				'message' => $exception->getMessage(),
+				'file'    => $exception->getFile(),
+				'line'    => $exception->getLine(),
+				'trace'   => $exception->getTrace(),
+			)
+		);
 
 		if ( $bugsneak_prev_exception_handler ) {
 			call_user_func( $bugsneak_prev_exception_handler, $exception );
@@ -151,22 +155,26 @@ register_shutdown_function(
 			return;
 		}
 
-		BugSneak_Early_Buffer::push( [
-			'handler' => 'shutdown',
-			'type'    => $error['type'],
-			'message' => $error['message'],
-			'file'    => $error['file'],
-			'line'    => $error['line'],
-		] );
+		BugSneak_Early_Buffer::push(
+			array(
+				'handler' => 'shutdown',
+				'type'    => $error['type'],
+				'message' => $error['message'],
+				'file'    => $error['file'],
+				'line'    => $error['line'],
+			)
+		);
 
 		// Last resort fallback. Only used if the site is failing to boot
 		// and the database is unreachable. Essential for diagnostic survival.
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Critical fallback logging
-		error_log( sprintf(
-			'[BugSneak EarlyBoot] Fatal: %s in %s on line %d',
-			$error['message'],
-			$error['file'],
-			$error['line']
-		) );
+		error_log(
+			sprintf(
+				'[BugSneak EarlyBoot] Fatal: %s in %s on line %d',
+				$error['message'],
+				$error['file'],
+				$error['line']
+			)
+		);
 	}
 );

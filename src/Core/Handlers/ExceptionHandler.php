@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class ExceptionHandler
+ * Exception Handler for BugSneak.
  */
 class ExceptionHandler {
 
@@ -34,8 +34,8 @@ class ExceptionHandler {
 	 * @param Engine $engine Core engine instance.
 	 */
 	public function __construct( Engine $engine ) {
-		$this->engine = $engine;
-		$this->previous_handler = set_exception_handler( [ $this, 'handle' ] );
+		$this->engine           = $engine;
+		$this->previous_handler = set_exception_handler( array( $this, 'handle' ) );
 	}
 
 	/**
@@ -53,12 +53,14 @@ class ExceptionHandler {
 		);
 
 		// Render the beautiful diagnostic overlay for front-end crashes.
-		$this->engine->render_overlay( [
-			'type'    => 'Uncaught Exception',
-			'message' => $exception->getMessage(),
-			'file'    => $exception->getFile(),
-			'line'    => $exception->getLine()
-		] );
+		$this->engine->render_overlay(
+			array(
+				'type'    => 'Uncaught Exception',
+				'message' => $exception->getMessage(),
+				'file'    => $exception->getFile(),
+				'line'    => $exception->getLine(),
+			)
+		);
 
 		if ( $this->previous_handler ) {
 			call_user_func( $this->previous_handler, $exception );

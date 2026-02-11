@@ -42,7 +42,7 @@ class Logger {
 			$max_rows = Settings::get( 'max_rows', 10000 );
 			if ( $max_rows > 0 ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
-				$current_count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM %i", $table_name ) );
+				$current_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM %i', $table_name ) );
 				if ( $current_count >= $max_rows ) {
 					return 'skipped';
 				}
@@ -54,20 +54,20 @@ class Logger {
 			// ── Grouping: increment existing ────────────────────────────
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 			$existing = $wpdb->get_row(
-				$wpdb->prepare( "SELECT id, occurrence_count FROM %i WHERE error_hash = %s", $table_name, $hash )
+				$wpdb->prepare( 'SELECT id, occurrence_count FROM %i WHERE error_hash = %s', $table_name, $hash )
 			);
 
 			if ( $existing ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 				$wpdb->update(
 					$table_name,
-					[
+					array(
 						'occurrence_count' => (int) $existing->occurrence_count + 1,
 						'last_seen'        => current_time( 'mysql' ),
-					],
-					[ 'id' => $existing->id ],
-					[ '%d', '%s' ],
-					[ '%d' ]
+					),
+					array( 'id' => $existing->id ),
+					array( '%d', '%s' ),
+					array( '%d' )
 				);
 				return 'grouped';
 			}
@@ -76,7 +76,7 @@ class Logger {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 			$result = $wpdb->insert(
 				$table_name,
-				[
+				array(
 					'error_type'       => sanitize_text_field( $data['type'] ),
 					'error_message'    => sanitize_textarea_field( $data['message'] ),
 					'file_path'        => sanitize_text_field( $data['file'] ),
@@ -93,12 +93,25 @@ class Logger {
 					'env_context'      => wp_json_encode( $data['env_context'] ),
 					'last_seen'        => current_time( 'mysql' ),
 					'created_at'       => current_time( 'mysql' ),
-				],
-				[
-					'%s', '%s', '%s', '%d', '%s', // type, message, file, line, trace
-					'%s', '%s', '%s', '%s', '%s', // wp, theme, culprit, token, snippet
-					'%s', '%d', '%s', '%s', '%s', '%s' // hash, count, request, env, last, created
-				]
+				),
+				array(
+					'%s',
+					'%s',
+					'%s',
+					'%d',
+					'%s', // Type, message, file, line, trace.
+					'%s',
+					'%s',
+					'%s',
+					'%s',
+					'%s', // WP, theme, culprit, token, snippet.
+					'%s',
+					'%d',
+					'%s',
+					'%s',
+					'%s',
+					'%s', // Hash, count, request, env, last, created.
+				)
 			);
 
 			return $result ? 'inserted' : 'error';

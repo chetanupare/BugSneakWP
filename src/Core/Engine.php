@@ -62,7 +62,7 @@ class Engine {
 		foreach ( $buffered as $error ) {
 			switch ( $error['handler'] ) {
 				case 'error':
-					$type_map = [
+					$type_map = array(
 						E_ERROR           => 'PHP Fatal Error',
 						E_WARNING         => 'PHP Warning',
 						E_NOTICE          => 'PHP Notice',
@@ -73,9 +73,9 @@ class Engine {
 						E_USER_WARNING    => 'User Warning',
 						E_USER_NOTICE     => 'User Notice',
 						E_USER_DEPRECATED => 'User Deprecated',
-					];
-					$type = $type_map[ $error['errno'] ] ?? 'PHP Error';
-					$this->log_error( $type, $error['message'], $error['file'], $error['line'], [] );
+					);
+					$type     = $type_map[ $error['errno'] ] ?? 'PHP Error';
+					$this->log_error( $type, $error['message'], $error['file'], $error['line'], array() );
 					break;
 
 				case 'exception':
@@ -84,20 +84,20 @@ class Engine {
 						$error['message'],
 						$error['file'],
 						$error['line'],
-						$error['trace'] ?? []
+						$error['trace'] ?? array()
 					);
 					break;
 
 				case 'shutdown':
-					$type_map = [
+					$type_map = array(
 						E_ERROR         => 'PHP Fatal Error',
 						E_PARSE         => 'PHP Parse Error',
 						E_CORE_ERROR    => 'PHP Core Error',
 						E_COMPILE_ERROR => 'PHP Compile Error',
 						E_USER_ERROR    => 'User Error',
-					];
-					$type = $type_map[ $error['type'] ] ?? 'Fatal Error';
-					$this->log_error( $type . ' (Fatal)', $error['message'], $error['file'], $error['line'], [] );
+					);
+					$type     = $type_map[ $error['type'] ] ?? 'Fatal Error';
+					$this->log_error( $type . ' (Fatal)', $error['message'], $error['file'], $error['line'], array() );
 					break;
 			}
 		}
@@ -116,7 +116,7 @@ class Engine {
 		try {
 			$severity = $this->classify_severity( $type, $message );
 
-			$data = [
+			$data = array(
 				'type'            => $type,
 				'message'         => $message,
 				'file'            => $file,
@@ -129,7 +129,7 @@ class Engine {
 				'code_snippet'    => $this->get_file_snippet( $file, $line ),
 				'request_context' => $this->get_request_context(),
 				'env_context'     => $this->get_env_context(),
-			];
+			);
 
 			\BugSneak\Database\Logger::insert( $data );
 		} catch ( \Throwable $e ) {
@@ -171,7 +171,7 @@ class Engine {
 	 * @return array
 	 */
 	private function get_request_context() {
-		$ctx = [];
+		$ctx = array();
 
 		if ( Settings::get( 'capture_get', true ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Intentional capture of request context for error logging
@@ -184,7 +184,7 @@ class Engine {
 		if ( Settings::get( 'capture_server', true ) ) {
 			$ctx['server'] = array_intersect_key(
 				$_SERVER,
-				array_flip( [ 'HTTP_HOST', 'REQUEST_URI', 'REQUEST_METHOD', 'REMOTE_ADDR', 'HTTP_USER_AGENT' ] )
+				array_flip( array( 'HTTP_HOST', 'REQUEST_URI', 'REQUEST_METHOD', 'REMOTE_ADDR', 'HTTP_USER_AGENT' ) )
 			);
 		}
 		if ( Settings::get( 'capture_cookies', false ) ) {
@@ -200,12 +200,12 @@ class Engine {
 	 * @return array
 	 */
 	private function get_env_context() {
-		$ctx = [];
+		$ctx = array();
 
 		if ( Settings::get( 'capture_user', true ) ) {
-			$user = wp_get_current_user();
+			$user              = wp_get_current_user();
 			$ctx['user_id']    = $user ? $user->ID : 0;
-			$ctx['user_roles'] = $user ? $user->roles : [];
+			$ctx['user_roles'] = $user ? $user->roles : array();
 		}
 
 		if ( Settings::get( 'capture_filter', true ) ) {
@@ -234,13 +234,17 @@ class Engine {
 	 */
 	public function get_file_snippet( $file, $line ) {
 		if ( ! file_exists( $file ) || ! is_readable( $file ) ) {
-			return [];
+			return array();
 		}
 
 		// Max file size guard.
 		$max_kb = Settings::get( 'max_file_size_kb', 512 );
 		if ( filesize( $file ) > $max_kb * 1024 ) {
-			return [ 'lines' => [], 'target' => (int) $line, 'truncated' => true ];
+			return array(
+				'lines'     => array(),
+				'target'    => (int) $line,
+				'truncated' => true,
+			);
 		}
 
 		$lines_before = Settings::get( 'lines_before', 5 );
@@ -250,16 +254,16 @@ class Engine {
 		$count      = count( $file_lines );
 		$start      = max( 0, $line - $lines_before - 1 );
 		$end        = min( $count, $line + $lines_after );
-		$result     = [];
+		$result     = array();
 
 		for ( $i = $start; $i < $end; $i++ ) {
 			$result[ $i + 1 ] = rtrim( $file_lines[ $i ] );
 		}
 
-		return [
+		return array(
 			'lines'  => $result,
 			'target' => (int) $line,
-		];
+		);
 	}
 
 	/**

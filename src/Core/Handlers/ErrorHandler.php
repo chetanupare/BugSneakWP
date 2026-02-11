@@ -36,7 +36,7 @@ class ErrorHandler {
 	 *
 	 * @var array
 	 */
-	private static $seen_hashes = [];
+	private static $seen_hashes = array();
 
 	/**
 	 * @var callable|null
@@ -51,7 +51,7 @@ class ErrorHandler {
 	public function __construct( Engine $engine ) {
 		$this->engine = $engine;
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Core feature of error logging plugin
-		$this->previous_handler = set_error_handler( [ $this, 'handle' ] );
+		$this->previous_handler = set_error_handler( array( $this, 'handle' ) );
 	}
 
 	/**
@@ -80,7 +80,7 @@ class ErrorHandler {
 		}
 
 		// 2. Error level filtering.
-		$levels = Settings::get( 'error_levels', [] );
+		$levels = Settings::get( 'error_levels', array() );
 		if ( ! $this->is_level_enabled( $errno, $levels ) ) {
 			return false;
 		}
@@ -115,7 +115,7 @@ class ErrorHandler {
 
 		// ── Logging ─────────────────────────────────────────────────────
 
-		self::$request_error_count++;
+		++self::$request_error_count;
 
 		$this->engine->log_error(
 			$type,
@@ -128,12 +128,14 @@ class ErrorHandler {
 
 		// Render overlay for non-fatal errors in debug mode.
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			$this->engine->render_overlay( [
-				'type'    => $type,
-				'message' => $errstr,
-				'file'    => $errfile,
-				'line'    => $errline,
-			] );
+			$this->engine->render_overlay(
+				array(
+					'type'    => $type,
+					'message' => $errstr,
+					'file'    => $errfile,
+					'line'    => $errline,
+				)
+			);
 		}
 
 		if ( $this->previous_handler ) {
@@ -151,7 +153,7 @@ class ErrorHandler {
 	 * @return bool
 	 */
 	private function is_level_enabled( $errno, $levels ) {
-		$map = [
+		$map = array(
 			E_WARNING           => 'warnings',
 			E_NOTICE            => 'notices',
 			E_USER_WARNING      => 'warnings',
@@ -160,7 +162,7 @@ class ErrorHandler {
 			E_USER_DEPRECATED   => 'deprecated',
 			E_STRICT            => 'strict',
 			E_RECOVERABLE_ERROR => 'fatal',
-		];
+		);
 
 		$key = $map[ $errno ] ?? 'notices';
 		return ! empty( $levels[ $key ] );
@@ -173,7 +175,7 @@ class ErrorHandler {
 	 * @return string
 	 */
 	private function get_error_type_name( $type ) {
-		$errors = [
+		$errors = array(
 			E_WARNING           => 'Warning',
 			E_NOTICE            => 'Notice',
 			E_USER_WARNING      => 'User Warning',
@@ -182,7 +184,7 @@ class ErrorHandler {
 			E_USER_DEPRECATED   => 'User Deprecated',
 			E_STRICT            => 'Strict Standards',
 			E_RECOVERABLE_ERROR => 'Catchable Fatal Error',
-		];
+		);
 		return $errors[ $type ] ?? 'PHP Error';
 	}
 }

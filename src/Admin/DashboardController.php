@@ -12,29 +12,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Class DashboardController
+ * Dashboard Controller for BugSneak.
  */
 class DashboardController {
 
 	/**
+	 * Singleton instance of the controller.
+	 *
 	 * @var DashboardController|null
 	 */
 	private static $instance = null;
 
 	/**
+	 * Reference to the Engine.
+	 *
+	 * @var \BugSneak\Core\Engine
+	 */
+	private $engine;
+
+	/**
+	 * Get the singleton instance.
+	 *
 	 * @return DashboardController
 	 */
 	public static function get_instance() {
 		if ( null === self::$instance ) {
-			self::$instance = new self();
+			self::$instance = new self( \BugSneak\Core\Engine::get_instance() );
 		}
 		return self::$instance;
 	}
 
-	private function __construct() {
-		add_action( 'admin_menu', [ $this, 'register_menu' ] );
-		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
-		add_filter( 'admin_body_class', [ $this, 'add_admin_body_class' ] );
+	/**
+	 * DashboardController constructor.
+	 *
+	 * @param \BugSneak\Core\Engine $engine Core engine instance.
+	 */
+	private function __construct( $engine ) {
+		$this->engine = $engine;
+		add_action( 'admin_menu', array( $this, 'register_pages' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
+		add_filter( 'admin_body_class', array( $this, 'add_admin_body_class' ) );
 	}
 
 	/**
@@ -46,7 +63,8 @@ class DashboardController {
 	public function add_admin_body_class( $classes ) {
 		$screen = get_current_screen();
 		if ( $screen && ( 'tools_page_bugsneak' === $screen->id || 'tools_page_bugsneak-settings' === $screen->id ) ) {
-			$classes .= ' bugsneak-admin-page ';
+			// Add body class for scoping.
+			return $classes . ' bugsneak-admin-page';
 		}
 		return $classes;
 	}
@@ -54,21 +72,21 @@ class DashboardController {
 	/**
 	 * Register menu pages.
 	 */
-	public function register_menu() {
+	public function register_pages() {
 		add_management_page(
 			'BugSneak',
 			'BugSneak',
 			'manage_options',
 			'bugsneak',
-			[ $this, 'render_dashboard' ]
+			array( $this, 'render_dashboard' )
 		);
 
 		add_management_page(
 			'BugSneak Settings',
-			'', // Hidden from menu — accessed via dashboard link
+			'', // Hidden from menu - accessed via dashboard link.
 			'manage_options',
 			'bugsneak-settings',
-			[ $this, 'render_settings' ]
+			array( $this, 'render_settings' )
 		);
 	}
 
@@ -90,12 +108,14 @@ class DashboardController {
 		wp_enqueue_script( 'wp-element' );
 		wp_enqueue_script( 'wp-api-fetch' );
 
-		wp_enqueue_style( 'bugsneak-inter', BUGSNEAK_URL . 'assets/vendor/inter.css', [], BUGSNEAK_VERSION );
-		wp_enqueue_style( 'bugsneak-material-icons', BUGSNEAK_URL . 'assets/vendor/material-icons.css', [], BUGSNEAK_VERSION );
+		wp_enqueue_style( 'bugsneak-inter', BUGSNEAK_URL . 'assets/vendor/inter.css', array(), BUGSNEAK_VERSION );
+		wp_enqueue_style( 'bugsneak-material-icons', BUGSNEAK_URL . 'assets/vendor/material-icons.css', array(), BUGSNEAK_VERSION );
 
-		wp_enqueue_script( 'bugsneak-marked', BUGSNEAK_URL . 'assets/vendor/marked.min.js', [], '12.0.0', false );
-		wp_enqueue_script( 'bugsneak-tailwind', BUGSNEAK_URL . 'assets/vendor/tailwindcss.js', [], BUGSNEAK_VERSION, false );
-		wp_add_inline_script( 'bugsneak-tailwind', "
+		wp_enqueue_script( 'bugsneak-marked', BUGSNEAK_URL . 'assets/vendor/marked.min.js', array(), '12.0.0', false );
+		wp_enqueue_script( 'bugsneak-tailwind', BUGSNEAK_URL . 'assets/vendor/tailwindcss.js', array(), BUGSNEAK_VERSION, false );
+		wp_add_inline_script(
+			'bugsneak-tailwind',
+			"
 			tailwind.config = {
 				darkMode: 'class',
 				theme: {
@@ -115,63 +135,69 @@ class DashboardController {
 					},
 				},
 			}
-		" );
+		"
+		);
 
-		wp_enqueue_style( 'bugsneak-dashboard-css', BUGSNEAK_URL . 'assets/dashboard.css', [], BUGSNEAK_VERSION );
+		wp_enqueue_style( 'bugsneak-dashboard-css', BUGSNEAK_URL . 'assets/dashboard.css', array(), BUGSNEAK_VERSION );
 
 		if ( $is_dashboard ) {
-			wp_enqueue_script( 'bugsneak-dashboard-app', BUGSNEAK_URL . 'assets/dashboard.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION . '.' . time(), true );
+			wp_enqueue_script( 'bugsneak-dashboard-app', BUGSNEAK_URL . 'assets/dashboard.js', array( 'wp-element', 'wp-api-fetch' ), BUGSNEAK_VERSION . '.' . time(), true );
+			// Localize dashboard strings.
 			wp_localize_script(
 				'bugsneak-dashboard-app',
 				'bugsneakData',
-				[
+				array(
 					'root'        => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
 					'nonce'       => wp_create_nonce( 'wp_rest' ),
-					'logs'        => array_map( function( $log ) use ( $is_dashboard ) {
-						// Spike Detection (Velocity Check)
-						$duration = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
-						$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : ( $log['occurrence_count'] > 1 ? 999 : 0 );
-						$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 );
+					'logs'        => array_map(
+						function ( $log ) use ( $is_dashboard ) {
+							// Spike Detection (Velocity Check).
+							$duration        = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
+							$velocity        = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : ( $log['occurrence_count'] > 1 ? 999 : 0 );
+							$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 );
 
-						// Build Context for Intelligence Engine
-						$context = \BugSneak\Intelligence\ContextBuilder::build();
-						$context['culprit']  = $log['culprit'];
-						$context['is_spike'] = $log['is_spike'];
+							// Build Context for Intelligence Engine.
+							$context             = \BugSneak\Intelligence\ContextBuilder::build();
+							$context['culprit']  = $log['culprit'];
+							$context['is_spike'] = $log['is_spike'];
 
-						$log['classification'] = \BugSneak\Intelligence\ErrorClassifier::classify( $log['error_message'], $context );
+							$log['classification'] = \BugSneak\Intelligence\ErrorClassifier::classify( $log['error_message'], $context );
 
-						return $log;
-					}, \BugSneak\Database\Schema::get_logs( 50 ) ),
+							return $log;
+						},
+						\BugSneak\Database\Schema::get_logs( 50 )
+					),
 					'settingsUrl' => admin_url( 'tools.php?page=bugsneak-settings' ),
-					'env'         => [
+					'env'         => array(
 						'php_version'  => PHP_VERSION,
 						'wp_version'   => $GLOBALS['wp_version'],
 						'memory_limit' => ini_get( 'memory_limit' ),
 						'server_os'    => php_uname( 's' ) . ' ' . php_uname( 'r' ),
 						'theme'        => wp_get_theme()->get( 'Name' ),
-					],
-					'logo_light' => BUGSNEAK_URL . 'logo-dark-new.png',
-					'logo_dark'  => BUGSNEAK_URL . 'logo-dark-new.png',
-					'logo_text'  => BUGSNEAK_URL . 'logo-text-new.svg',
-					'ai_enabled' => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
-					'ai_provider'=> \BugSneak\Admin\Settings::get( 'ai_provider', 'gemini' ),
-				]
+					),
+					'logo_light'  => BUGSNEAK_URL . 'logo-dark-new.png',
+					'logo_dark'   => BUGSNEAK_URL . 'logo-dark-new.png',
+					'logo_text'   => BUGSNEAK_URL . 'logo-text-new.svg',
+					'ai_enabled'  => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
+					'ai_provider' => \BugSneak\Admin\Settings::get( 'ai_provider', 'gemini' ),
+				)
 			);
 		}
 
 		if ( $is_settings ) {
-			wp_enqueue_script( 'bugsneak-settings-app', BUGSNEAK_URL . 'assets/settings.js', [ 'wp-element', 'wp-api-fetch' ], BUGSNEAK_VERSION, true );
+			wp_enqueue_script( 'bugsneak-settings-app', BUGSNEAK_URL . 'assets/settings.js', array( 'wp-element', 'wp-api-fetch' ), BUGSNEAK_VERSION, true );
+			// Localize settings strings.
 			wp_localize_script(
 				'bugsneak-settings-app',
 				'bugsneakSettingsData',
-				[
+				array(
 					'root'         => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
 					'nonce'        => wp_create_nonce( 'wp_rest' ),
 					'dashboardUrl' => admin_url( 'tools.php?page=bugsneak' ),
 					'logo_light'   => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_dark'    => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_text'    => BUGSNEAK_URL . 'logo-text-new.svg',
-				]
+				)
 			);
 		}
 	}

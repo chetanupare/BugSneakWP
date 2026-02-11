@@ -3,14 +3,14 @@
  * Plugin Name: BugSneak
  * Plugin URI:  https://bugsneak.com
  * Description: Crash Intelligence System — intercepts PHP Fatal Errors, Exceptions, and Warnings with beautiful diagnostics.
- * Version:     1.3.5
+ * Version:     1.4.0
  * Author:      Chetan Upare
  * Author URI:  https://github.com/chetanupare/
  * License:     GPLv2 or later
  * Text Domain: bugsneak
  * Domain Path: /languages
  * Requires at least: 6.2
- * Stable tag: 1.3.5
+ * Stable tag: 1.4.0
  *
  * @package BugSneak
  */
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define constants.
-define( 'BUGSNEAK_VERSION', '1.3.5' );
+define( 'BUGSNEAK_VERSION', '1.4.0' );
 define( 'BUGSNEAK_PATH', plugin_dir_path( __FILE__ ) );
 define( 'BUGSNEAK_URL', plugin_dir_url( __FILE__ ) );
 
@@ -127,6 +127,7 @@ function bugsneak_activate() {
 	$should_write = true;
 
 	if ( file_exists( $mu_path ) ) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Required for local MU loader check
 		$existing = file_get_contents( $mu_path );
 		// Only overwrite if it's a BugSneak file.
 		if ( strpos( $existing, 'BugSneak MU Loader' ) === false ) {
@@ -151,6 +152,7 @@ function bugsneak_deactivate() {
 	$mu_path = bugsneak_mu_loader_path();
 
 	if ( file_exists( $mu_path ) ) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Required for local MU loader check
 		$content = file_get_contents( $mu_path );
 		// Only delete if it's our file.
 		if ( strpos( $content, 'BugSneak MU Loader' ) !== false ) {
@@ -170,17 +172,20 @@ register_deactivation_hook( __FILE__, 'bugsneak_deactivate' );
 
 // ── MU Installation Notice ─────────────────────────────────────────────────
 
-add_action( 'admin_notices', function () {
-	$notice = get_transient( 'bugsneak_mu_notice' );
-	if ( ! $notice ) {
-		return;
-	}
-	delete_transient( 'bugsneak_mu_notice' );
+add_action(
+	'admin_notices',
+	function () {
+		$notice = get_transient( 'bugsneak_mu_notice' );
+		if ( ! $notice ) {
+			return;
+		}
+		delete_transient( 'bugsneak_mu_notice' );
 
-	if ( 'failed' === $notice ) {
-		echo '<div class="notice notice-warning is-dismissible"><p>';
-		echo '<strong>BugSneak:</strong> Could not create MU loader at <code>' . esc_html( WPMU_PLUGIN_DIR ) . '</code>. ';
-		echo 'Early crash capture may be reduced. Please ensure the <code>mu-plugins</code> directory is writable.';
-		echo '</p></div>';
+		if ( 'failed' === $notice ) {
+			echo '<div class="notice notice-warning is-dismissible"><p>';
+			echo '<strong>BugSneak:</strong> Could not create MU loader at <code>' . esc_html( WPMU_PLUGIN_DIR ) . '</code>. ';
+			echo 'Early crash capture may be reduced. Please ensure the <code>mu-plugins</code> directory is writable.';
+			echo '</p></div>';
+		}
 	}
-} );
+);

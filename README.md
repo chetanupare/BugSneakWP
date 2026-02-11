@@ -11,7 +11,7 @@ Instead of digging through massive `debug.log` files or guessing which plugin ca
 ## ✨ Key Features
 
 - **🔍 Precise Culprit Detection:** Instantly identifies which plugin or theme is responsible for the crash.
-- **🧠 Context-Aware Intelligence (v1.3.5):** Dynamic confidence scoring based on PHP/WP versions, request context, and detected environment signals.
+- **🧠 Context-Aware IntelligencStable tag: 1.4.0):** Dynamic confidence scoring based on PHP/WP versions, request context, and detected environment signals.
 - **📈 Spike Detection:** Detects rapid bursts of repeated errors to highlight abnormal patterns.
 - **🔎 Code Snippet Preview:** View the exact file and line of the error with ±5 lines of context right in the dashboard.
 - **🛡️ Production Safe:** Near-zero overhead. Safely logs in the background without affecting visitors.
