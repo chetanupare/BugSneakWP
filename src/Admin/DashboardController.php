@@ -121,7 +121,7 @@ class DashboardController {
 						'server_os'    => php_uname( 's' ) . ' ' . php_uname( 'r' ),
 						'theme'        => wp_get_theme()->get( 'Name' ),
 					],
-					'logo_light' => BUGSNEAK_URL . 'logo-light.png',
+					'logo_light' => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_dark'  => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_text'  => BUGSNEAK_URL . 'logo-text-new.svg',
 					'ai_enabled' => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
@@ -139,7 +139,7 @@ class DashboardController {
 					'root'         => esc_url_raw( rest_url( 'bugsneak/v1' ) ),
 					'nonce'        => wp_create_nonce( 'wp_rest' ),
 					'dashboardUrl' => admin_url( 'tools.php?page=bugsneak' ),
-					'logo_light'   => BUGSNEAK_URL . 'logo-light.png',
+					'logo_light'   => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_dark'    => BUGSNEAK_URL . 'logo-dark-new.png',
 					'logo_text'    => BUGSNEAK_URL . 'logo-text-new.svg',
 				]
