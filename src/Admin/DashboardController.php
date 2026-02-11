@@ -117,7 +117,7 @@ class DashboardController {
 						
 						// Spike Detection (Velocity Check)
 						$duration = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
-						$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : 0; // Errors per minute
+						$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : ( $log['occurrence_count'] > 1 ? 999 : 0 );
 						$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 ); // >10 errors and >5/min
 
 						return $log;
@@ -184,11 +184,8 @@ class DashboardController {
 			/* Ensure the content area fills the remaining viewport */
 			#wpcontent { 
 				padding: 0 !important; 
-				margin: 0 !important; 
 				height: calc(100vh - 32px) !important; /* Default WP Admin Bar height */
 				box-sizing: border-box; 
-				float: none !important;
-				width: auto !important;
 			}
 
 			/* Handle responsive admin bar height (46px on mobile/small screens) */

@@ -106,7 +106,7 @@ class RestController {
 
 			// Spike Detection (Velocity Check)
 			$duration = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
-			$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : 0; // Errors per minute
+			$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : ( $log['occurrence_count'] > 1 ? 999 : 0 );
 			$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 );
 
 			return $log;
