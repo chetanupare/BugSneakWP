@@ -39,11 +39,24 @@ $bs_severity = $data['severity'] ?? 'Fatal';
 </head>
 <body class="min-h-screen flex flex-col">
 
+    <?php
+    $nav_logo = defined('BUGSNEAK_URL') ? BUGSNEAK_URL . 'logo-text-new.svg' : '';
+    
+    // Run Classification (Layer 2)
+    $classification = [ 'category' => 'Unclassified', 'suggestion' => 'Review stack trace for details.', 'severity' => 'unknown' ];
+    if ( class_exists( '\BugSneak\Intelligence\ErrorClassifier' ) ) {
+        $classification = \BugSneak\Intelligence\ErrorClassifier::classify( $data['message'] );
+    }
+    ?>
+
     <!-- Header Bar -->
     <header class="bg-[#1e293b] border-b border-[#334155] h-12 flex items-center justify-between px-6 shrink-0">
         <div class="flex items-center gap-2.5">
-            <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#6366f1] to-[#818cf8] flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-[#6366f1]/20">T</div>
-            <span class="font-bold text-sm tracking-tight text-white">BugSneak</span>
+            <?php if ( $nav_logo ) : ?>
+                <img src="<?php echo esc_url( $nav_logo ); ?>" alt="BugSneak" class="h-6 w-auto" style="filter: brightness(0) invert(1);">
+            <?php else : ?>
+                <span class="font-bold text-sm tracking-tight text-white">BugSneak</span>
+            <?php endif; ?>
             <span class="text-[9px] font-bold text-[#94a3b8] bg-[#334155] px-1.5 py-0.5 rounded ml-1 uppercase tracking-wider">Diagnostic</span>
         </div>
         <div class="text-[10px] text-[#64748b] font-mono uppercase tracking-widest hidden sm:block">Intercepted · <?php echo esc_html( strtoupper( $bs_severity ) ); ?></div>
@@ -57,7 +70,12 @@ $bs_severity = $data['severity'] ?? 'Fatal';
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold text-white uppercase tracking-wider shadow-lg <?php echo strtolower( $bs_severity ) === 'warning' ? 'bg-[#f59e0b] shadow-[#f59e0b]/20' : 'bg-[#ef4444] shadow-[#ef4444]/20'; ?>">
                     <?php echo esc_html( strtoupper( $bs_severity ) ); ?>
                 </span>
-                <span class="text-[10px] text-[#64748b] font-mono tracking-wider">v1.1 Engine</span>
+                <?php if ( $classification['category'] !== 'Unclassified' ) : ?>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[9px] font-bold text-[#e2e8f0] bg-[#334155] border border-[#475569] uppercase tracking-wider">
+                        <?php echo esc_html( $classification['category'] ); ?>
+                    </span>
+                <?php endif; ?>
+                <span class="text-[10px] text-[#64748b] font-mono tracking-wider">v1.3 Engine</span>
             </div>
 
             <h1 class="text-xl md:text-2xl font-bold text-white leading-tight break-words">
@@ -79,10 +97,15 @@ $bs_severity = $data['severity'] ?? 'Fatal';
                     <span class="material-icons text-[#818cf8] text-xl">auto_fix_high</span>
                 </div>
                 <div class="space-y-1">
-                    <h3 class="text-[10px] font-bold text-[#818cf8] uppercase tracking-wider">AI Insight</h3>
+                    <h3 class="text-[10px] font-bold text-[#818cf8] uppercase tracking-wider">Smart Analysis</h3>
                     <p class="text-[13px] text-[#cbd5e1] leading-relaxed">
-                        Culprit: <code class="bg-[rgba(99,102,241,0.12)] px-1.5 py-0.5 rounded text-[#a5b4fc] font-bold text-[12px]"><?php echo esc_html( $data['culprit'] ); ?></code>.
-                        Unhandled operation on line <?php echo (int) $data['line']; ?>.
+                        <?php if ( $classification['category'] !== 'Unclassified' ) : ?>
+                            <strong><?php echo esc_html( $classification['category'] ); ?>:</strong>
+                            <?php echo esc_html( $classification['suggestion'] ); ?>
+                        <?php else : ?>
+                            Culprit: <code class="bg-[rgba(99,102,241,0.12)] px-1.5 py-0.5 rounded text-[#a5b4fc] font-bold text-[12px]"><?php echo esc_html( $data['culprit'] ); ?></code>.
+                            Review the code context below.
+                        <?php endif; ?>
                     </p>
                 </div>
             </div>
