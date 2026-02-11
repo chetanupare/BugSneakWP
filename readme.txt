@@ -30,6 +30,7 @@ Inspired by modern crash intelligence tools, BugSneak uses **Pattern-Aware Error
 *   **Early Crash Capture:** Uses an MU (Must-Use) loader to catch errors that happen before normal plugins even load.
 *   **Production Safe:** Near-zero overhead during normal requests. Safely logs in the background without exposing errors to visitors.
 *   **Hybrid Intelligence (v1.3):** Features on-demand error analysis via Google Gemini or OpenAI ChatGPT to explain crashes and suggest fixes instantly. AI analysis is optional, user-initiated, and requires a valid API key. Error data is sent only when you explicitly request AI insights.
+*   **Error Classification Engine (v1.3.4):** Instantly recognizes common WordPress error patterns (e.g., Memory Exhaustion, Database Error) and provides immediate, rule-based suggestions without needing external AI.
 *   **Infrastructure Health:** Dedicated settings page with live health indicators and performance safety guards.
 
 == Privacy Notice ==
@@ -70,6 +71,9 @@ No. All logging is stored locally. External AI providers are only contacted when
 == Changelog ==
 
 = 1.3.4 =
+* Feature: Layer 2 Error Classification Engine. Instantly categorizes errors with actionable suggestions.
+* Strategy: Pivot branding to "Adaptive Crash Intelligence".
+* UI Fix: Restored WordPress admin menu scrollability while keeping the dashboard full-height.
 * Bugfix: Resolved `MarkdownContent` reference error in Dashboard.
 * Polish: Corrected Tailwind inline script initialization.
 * Refactor: Optimized AI provider-specific model settings.
