@@ -123,7 +123,7 @@ class DashboardController {
 					],
 					'logo_light' => BUGSNEAK_URL . 'logo-light.png',
 					'logo_dark'  => BUGSNEAK_URL . 'logo-dark.png',
-					'logo_text'  => BUGSNEAK_URL . 'logo-text.svg',
+					'logo_text'  => BUGSNEAK_URL . 'logo-text-new.svg',
 					'ai_enabled' => \BugSneak\Admin\Settings::get( 'ai_enabled', false ),
 					'ai_provider'=> \BugSneak\Admin\Settings::get( 'ai_provider', 'gemini' ),
 				]
@@ -141,7 +141,7 @@ class DashboardController {
 					'dashboardUrl' => admin_url( 'tools.php?page=bugsneak' ),
 					'logo_light'   => BUGSNEAK_URL . 'logo-light.png',
 					'logo_dark'    => BUGSNEAK_URL . 'logo-dark.png',
-					'logo_text'    => BUGSNEAK_URL . 'logo-text.svg',
+					'logo_text'    => BUGSNEAK_URL . 'logo-text-new.svg',
 				]
 			);
 		}
