@@ -169,12 +169,11 @@ class DashboardController {
 	private function render_full_page_shell( $root_id ) {
 		?>
 		<style>
-			html, body, #wpwrapper { height: 100vh !important; overflow: hidden !important; }
-			#wpcontent { padding-left: 0 !important; height: 100vh !important; }
+			#wpcontent { padding-left: 0 !important; height: 100vh !important; box-sizing: border-box; }
 			#wpbody { height: 100% !important; }
 			#wpbody-content { padding-bottom: 0 !important; float: none !important; width: auto !important; height: 100% !important; display: flex; flex-direction: column; overflow: hidden !important; }
 			#wpbody-content > *:not(#<?php echo esc_attr( $root_id ); ?>) { display: none !important; }
-			#<?php echo esc_attr( $root_id ); ?> { flex: 1 1 auto; width: 100%; margin: 0; padding: 0; min-height: 0; display: flex; flex-direction: column; }
+			#<?php echo esc_attr( $root_id ); ?> { flex: 1 1 auto; width: 100%; margin: 0; padding: 0; min-height: 0; display: flex; flex-direction: column; height: 100% !important; }
 			#wpfooter { display: none !important; }
 			.notice, .updated, .error, .update-nag, .is-dismissible, .notice-dismiss { display: none !important; }
 		</style>
