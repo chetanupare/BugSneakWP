@@ -240,12 +240,12 @@ const SettingsApp = () => {
                     el('div', { className: 'flex items-center justify-center' },
                         el('img', {
                             src: window.bugsneakSettingsData?.logo_text,
-                            className: 'h-8 w-auto ml-1',
+                            className: 'h-6 w-auto ml-1',
                             style: { filter: isDark ? 'brightness(0) invert(1)' : 'none' },
                             alt: 'BugSneak'
                         })
                     ),
-                    el('span', { className: 'text-[10px] font-bold text-[var(--tl-text-muted)] bg-[var(--tl-surface-hover)] px-2 py-0.5 rounded-md ml-2 uppercase tracking-wider' }, 'v1.2')
+                    el('span', { className: 'text-[10px] font-bold text-[var(--tl-text-muted)] bg-[var(--tl-surface-hover)] px-2 py-0.5 rounded-md ml-2 uppercase tracking-wider' }, 'v1.3.4')
                 ])
             ]),
             el('div', { className: 'flex items-center gap-2' }, [
