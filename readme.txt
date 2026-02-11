@@ -65,9 +65,9 @@ No. All logging is stored locally. External AI providers are only contacted when
 
 == Screenshots ==
 
-1. The modern BugSneak dashboard with card-based error grouping.
-2. Detailed error view with stack traces and code snippet previews.
-3. Dedicated settings page with System Health indicators.
+1. The modern BugSneak dashboard with intelligent error grouping and classification.
+2. Diagnostic overlay screen showing real-time crash analysis with code context.
+3. Dedicated settings page with System Health indicators and AI integration.
 
 == Changelog ==
 
