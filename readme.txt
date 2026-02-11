@@ -10,7 +10,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 == Description ==
 Catch Fatal Errors and Exceptions with interactive diagnostics and optional AI-powered insights.
 
-BugSneak is a modern Crash Intelligence System for WordPress.
+BugSneak is **Adaptive Crash Intelligence** for WordPress.
 
 Instead of digging through massive `debug.log` files or guessing which plugin caused a white screen, BugSneak captures Fatal Errors, Exceptions, and Warnings and presents them in a curated, developer-focused dashboard.
 
@@ -19,7 +19,7 @@ It intelligently groups repeated crashes, pinpoints the suspected plugin or them
 BugSneak focuses entirely on crash clarity, not performance profiling.
 
 ## Vision
-Inspired by modern crash intelligence tools, BugSneak brings curated diagnostics directly into WordPress — the cleanest, fastest way to understand crashes inside WP Admin.
+Inspired by modern crash intelligence tools, BugSneak uses **Pattern-Aware Error Diagnostics** to provide the cleanest, fastest way to understand crashes inside WP Admin.
 
 == Features ==
 
@@ -29,7 +29,7 @@ Inspired by modern crash intelligence tools, BugSneak brings curated diagnostics
 *   **Rich Context Capture:** See User Identity ($ID, Role), WP State, PHP Version, and Memory Usage at the moment of failure.
 *   **Early Crash Capture:** Uses an MU (Must-Use) loader to catch errors that happen before normal plugins even load.
 *   **Production Safe:** Near-zero overhead during normal requests. Safely logs in the background without exposing errors to visitors.
-*   **AI-Powered Insights (v1.3):** Integrated **Hybrid Intelligence**. Features on-demand error analysis via Google Gemini or OpenAI ChatGPT to explain crashes and suggest fixes instantly. AI analysis is optional and requires a valid API key. Error data is sent only when you explicitly request AI insights.
+*   **Hybrid Intelligence (v1.3):** Features on-demand error analysis via Google Gemini or OpenAI ChatGPT to explain crashes and suggest fixes instantly. AI analysis is optional, user-initiated, and requires a valid API key. Error data is sent only when you explicitly request AI insights.
 *   **Infrastructure Health:** Dedicated settings page with live health indicators and performance safety guards.
 
 == Privacy Notice ==
