@@ -139,13 +139,13 @@ class ErrorClassifier
         ],
 
         [
-            'type'      => 'literal',
-            'pattern'   => 'Undefined array key',
+            'type'      => 'regex',
+            'pattern'   => '/Undefined (array key|index|offset)/i',
             'category'  => 'Undefined Array Key',
             'severity'  => 'low',
             'weight'    => 50,
             'tags'      => ['notice', 'php'],
-            'suggestion'=> 'Ensure array key exists before accessing it.',
+            'suggestion'=> 'Check if array key/index exists before accessing it.',
         ],
         
         [
@@ -338,7 +338,7 @@ class ErrorClassifier
 
         if (empty($matches)) {
             return [
-                'category'   => 'Unclassified Error',
+                'category'   => 'Unclassified',
                 'severity'   => 'unknown',
                 'confidence' => 0,
                 'tags'       => [],
