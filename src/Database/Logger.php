@@ -41,6 +41,7 @@ class Logger {
 			// ── Capacity guard ──────────────────────────────────────────
 			$max_rows = Settings::get( 'max_rows', 10000 );
 			if ( $max_rows > 0 ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 				$current_count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM %i", $table_name ) );
 				if ( $current_count >= $max_rows ) {
 					return 'skipped';
@@ -51,11 +52,13 @@ class Logger {
 			$hash = md5( $data['message'] . '|' . $data['file'] . '|' . $data['line'] );
 
 			// ── Grouping: increment existing ────────────────────────────
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 			$existing = $wpdb->get_row(
 				$wpdb->prepare( "SELECT id, occurrence_count FROM %i WHERE error_hash = %s", $table_name, $hash )
 			);
 
 			if ( $existing ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 				$wpdb->update(
 					$table_name,
 					[
@@ -70,6 +73,7 @@ class Logger {
 			}
 
 			// ── New insert ──────────────────────────────────────────────
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Direct query required for performance during error capture
 			$result = $wpdb->insert(
 				$table_name,
 				[
@@ -102,6 +106,7 @@ class Logger {
 		} catch ( \Throwable $e ) {
 			// Graceful failure — never crash the site because of logging.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Critical fallback logging
 				error_log( 'BugSneak Logger failed: ' . $e->getMessage() );
 			}
 			return 'error';

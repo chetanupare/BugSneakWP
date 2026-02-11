@@ -74,9 +74,10 @@ final class BugSneak_Early_Buffer {
  * BugSneak is a crash intelligence system. We must use set_error_handler
  * to intercept PHP warnings and notices before they are lost.
  */
+$bugsneak_prev_error_handler = null;
 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Core feature of error logging plugin
-set_error_handler(
-	function ( $errno, $errstr, $errfile, $errline ) {
+$bugsneak_prev_error_handler = set_error_handler(
+	function ( $errno, $errstr, $errfile, $errline ) use ( &$bugsneak_prev_error_handler ) {
 		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting -- Required for error capture
 		if ( ! ( error_reporting() & $errno ) ) {
 			return false;
@@ -95,17 +96,24 @@ set_error_handler(
 			'line'    => $errline,
 		] );
 
+		if ( $bugsneak_prev_error_handler ) {
+			return call_user_func( $bugsneak_prev_error_handler, $errno, $errstr, $errfile, $errline );
+		}
+
 		return false; // Allow normal PHP error handling to continue.
 	}
 );
 
 // ── Early Exception Handler ─────────────────────────────────────────────────
-
-set_exception_handler(
-	function ( $exception ) {
+$bugsneak_prev_exception_handler = null;
+$bugsneak_prev_exception_handler = set_exception_handler(
+	function ( $exception ) use ( &$bugsneak_prev_exception_handler ) {
 		// If the full engine is loaded, it has its own handler.
 		if ( BugSneak_Early_Buffer::is_drained() ) {
-			throw $exception; // Re-throw for the engine's handler.
+			if ( $bugsneak_prev_exception_handler ) {
+				call_user_func( $bugsneak_prev_exception_handler, $exception );
+			}
+			throw $exception; // Still throw to be safe.
 		}
 
 		BugSneak_Early_Buffer::push( [
@@ -116,6 +124,10 @@ set_exception_handler(
 			'line'    => $exception->getLine(),
 			'trace'   => $exception->getTrace(),
 		] );
+
+		if ( $bugsneak_prev_exception_handler ) {
+			call_user_func( $bugsneak_prev_exception_handler, $exception );
+		}
 	}
 );
 
@@ -149,6 +161,7 @@ register_shutdown_function(
 
 		// Last resort fallback. Only used if the site is failing to boot
 		// and the database is unreachable. Essential for diagnostic survival.
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Critical fallback logging
 		error_log( sprintf(
 			'[BugSneak EarlyBoot] Fatal: %s in %s on line %d',
 			$error['message'],

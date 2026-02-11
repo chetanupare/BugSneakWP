@@ -34,6 +34,21 @@ class DashboardController {
 	private function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_menu' ] );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_assets' ] );
+		add_filter( 'admin_body_class', [ $this, 'add_admin_body_class' ] );
+	}
+
+	/**
+	 * Add custom body class for BugSneak pages.
+	 *
+	 * @param string $classes Existing classes.
+	 * @return string
+	 */
+	public function add_admin_body_class( $classes ) {
+		$screen = get_current_screen();
+		if ( $screen && ( 'tools_page_bugsneak' === $screen->id || 'tools_page_bugsneak-settings' === $screen->id ) ) {
+			$classes .= ' bugsneak-admin-page ';
+		}
+		return $classes;
 	}
 
 	/**

@@ -24,13 +24,18 @@ class ExceptionHandler {
 	private $engine;
 
 	/**
+	 * @var callable|null
+	 */
+	private $previous_handler;
+
+	/**
 	 * ExceptionHandler constructor.
 	 *
 	 * @param Engine $engine Core engine instance.
 	 */
 	public function __construct( Engine $engine ) {
 		$this->engine = $engine;
-		set_exception_handler( [ $this, 'handle' ] );
+		$this->previous_handler = set_exception_handler( [ $this, 'handle' ] );
 	}
 
 	/**
@@ -54,5 +59,9 @@ class ExceptionHandler {
 			'file'    => $exception->getFile(),
 			'line'    => $exception->getLine()
 		] );
+
+		if ( $this->previous_handler ) {
+			call_user_func( $this->previous_handler, $exception );
+		}
 	}
 }

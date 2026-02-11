@@ -48,6 +48,7 @@ class ShutdownHandler {
 				$error['message'],
 				$error['file'],
 				$error['line'],
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Core feature for providing error context
 				debug_backtrace()
 			);
 

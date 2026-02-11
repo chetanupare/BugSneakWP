@@ -39,13 +39,19 @@ class ErrorHandler {
 	private static $seen_hashes = [];
 
 	/**
+	 * @var callable|null
+	 */
+	private $previous_handler;
+
+	/**
 	 * ErrorHandler constructor.
 	 *
 	 * @param Engine $engine Core engine instance.
 	 */
 	public function __construct( Engine $engine ) {
 		$this->engine = $engine;
-		set_error_handler( [ $this, 'handle' ] );
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_set_error_handler -- Core feature of error logging plugin
+		$this->previous_handler = set_error_handler( [ $this, 'handle' ] );
 	}
 
 	/**
@@ -58,6 +64,7 @@ class ErrorHandler {
 	 * @return bool
 	 */
 	public function handle( $errno, $errstr, $errfile, $errline ) {
+		// phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting -- Required for error capture
 		if ( ! ( error_reporting() & $errno ) ) {
 			return false;
 		}
@@ -115,6 +122,7 @@ class ErrorHandler {
 			$errstr,
 			$errfile,
 			$errline,
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_debug_backtrace -- Core feature for providing error context
 			debug_backtrace()
 		);
 
@@ -126,6 +134,10 @@ class ErrorHandler {
 				'file'    => $errfile,
 				'line'    => $errline,
 			] );
+		}
+
+		if ( $this->previous_handler ) {
+			return call_user_func( $this->previous_handler, $errno, $errstr, $errfile, $errline );
 		}
 
 		return false;

@@ -32,6 +32,7 @@ function bugsneak_test_fail( $name, $detail = '' ) { echo "  ❌  FAIL  │  {$n
 
 function bugsneak_test_count_rows() {
 	global $wpdb;
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- CLI test utility
 	return (int) $wpdb->get_var( "SELECT COUNT(id) FROM {$wpdb->prefix}bugsneak_logs" );
 }
 

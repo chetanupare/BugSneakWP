@@ -113,24 +113,31 @@ class Engine {
 	 * @param array  $trace   Stack trace.
 	 */
 	public function log_error( $type, $message, $file, $line, $trace ) {
-		$severity = $this->classify_severity( $type, $message );
+		try {
+			$severity = $this->classify_severity( $type, $message );
 
-		$data = [
-			'type'            => $type,
-			'message'         => $message,
-			'file'            => $file,
-			'line'            => $line,
-			'trace'           => $trace,
-			'severity'        => $severity,
-			'wp_version'      => $GLOBALS['wp_version'] ?? 'Unknown',
-			'active_theme'    => wp_get_theme()->get( 'Name' ) . ' (' . wp_get_theme()->get( 'Version' ) . ')',
-			'culprit'         => \BugSneak\Culprit\Detector::detect( $file ),
-			'code_snippet'    => $this->get_file_snippet( $file, $line ),
-			'request_context' => $this->get_request_context(),
-			'env_context'     => $this->get_env_context(),
-		];
+			$data = [
+				'type'            => $type,
+				'message'         => $message,
+				'file'            => $file,
+				'line'            => $line,
+				'trace'           => $trace,
+				'severity'        => $severity,
+				'wp_version'      => $GLOBALS['wp_version'] ?? 'Unknown',
+				'active_theme'    => wp_get_theme()->get( 'Name' ) . ' (' . wp_get_theme()->get( 'Version' ) . ')',
+				'culprit'         => \BugSneak\Culprit\Detector::detect( $file ),
+				'code_snippet'    => $this->get_file_snippet( $file, $line ),
+				'request_context' => $this->get_request_context(),
+				'env_context'     => $this->get_env_context(),
+			];
 
-		\BugSneak\Database\Logger::insert( $data );
+			\BugSneak\Database\Logger::insert( $data );
+		} catch ( \Throwable $e ) {
+			// Fail silently — never let the logger crash the site.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'BugSneak Logger Failed: ' . $e->getMessage() );
+			}
+		}
 	}
 
 	/**
@@ -166,9 +173,11 @@ class Engine {
 		$ctx = [];
 
 		if ( Settings::get( 'capture_get', true ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Intentional capture of request context for error logging
 			$ctx['get'] = $_GET;
 		}
 		if ( Settings::get( 'capture_post', true ) ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Intentional capture of request context for error logging
 			$ctx['post'] = $_POST;
 		}
 		if ( Settings::get( 'capture_server', true ) ) {
@@ -258,47 +267,56 @@ class Engine {
 	 * @param array $data Error data.
 	 */
 	public function render_overlay( $data ) {
-		$mode = Settings::get( 'capture_mode', 'debug' );
+		try {
+			$mode = Settings::get( 'capture_mode', 'debug' );
 
-		// In debug mode, only show if WP_DEBUG is on.
-		if ( 'debug' === $mode && ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) ) {
-			return;
+			// In debug mode, only show if WP_DEBUG is on.
+			if ( 'debug' === $mode && ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) ) {
+				return;
+			}
+
+			// In production mode, only show to admins.
+			if ( 'production' === $mode && ! current_user_can( 'manage_options' ) ) {
+				return;
+			}
+
+			// phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Required to suppress output during overlay rendering
+			ini_set( 'display_errors', '0' );
+			// phpcs:ignore WordPress.PHP.DevelopmentFunctions.prevent_path_disclosure_error_reporting -- Required to suppress output during overlay rendering
+			error_reporting( 0 );
+
+			while ( ob_get_level() ) {
+				ob_clean();
+				ob_end_clean();
+			}
+
+			if ( ! isset( $data['culprit'] ) ) {
+				$data['culprit'] = \BugSneak\Culprit\Detector::detect( $data['file'] );
+			}
+			if ( ! isset( $data['code_snippet'] ) ) {
+				$data['code_snippet'] = $this->get_file_snippet( $data['file'], $data['line'] );
+			}
+			if ( ! isset( $data['severity'] ) ) {
+				$data['severity'] = $this->classify_severity( $data['type'] ?? 'Fatal', $data['message'] ?? '' );
+			}
+
+			$template_path = BUGSNEAK_PATH . 'src/Core/Templates/DiagnosticOverlay.php';
+
+			if ( file_exists( $template_path ) ) {
+				include $template_path;
+			} else {
+				echo '<div style="background:#0f172a; color:#f8fafc; padding:40px; font-family:sans-serif; min-height:100vh;">';
+				echo '<h1 style="color:#ef4444;">' . esc_html( $data['message'] ) . '</h1>';
+				echo '<p style="color:#6366f1;">BugSneak: ' . esc_html( $data['file'] ) . ' line ' . (int) $data['line'] . '</p>';
+				echo '</div>';
+			}
+
+			exit();
+		} catch ( \Throwable $e ) {
+			// If overlay fails, just let PHP's own error handling (or other handlers) take over.
+			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+				error_log( 'BugSneak Overlay Failed: ' . $e->getMessage() );
+			}
 		}
-
-		// In production mode, only show to admins.
-		if ( 'production' === $mode && ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		ini_set( 'display_errors', '0' );
-		error_reporting( 0 );
-
-		while ( ob_get_level() ) {
-			ob_clean();
-			ob_end_clean();
-		}
-
-		if ( ! isset( $data['culprit'] ) ) {
-			$data['culprit'] = \BugSneak\Culprit\Detector::detect( $data['file'] );
-		}
-		if ( ! isset( $data['code_snippet'] ) ) {
-			$data['code_snippet'] = $this->get_file_snippet( $data['file'], $data['line'] );
-		}
-		if ( ! isset( $data['severity'] ) ) {
-			$data['severity'] = $this->classify_severity( $data['type'] ?? 'Fatal', $data['message'] ?? '' );
-		}
-
-		$template_path = BUGSNEAK_PATH . 'src/Core/Templates/DiagnosticOverlay.php';
-
-		if ( file_exists( $template_path ) ) {
-			include $template_path;
-		} else {
-			echo '<div style="background:#0f172a; color:#f8fafc; padding:40px; font-family:sans-serif; min-height:100vh;">';
-			echo '<h1 style="color:#ef4444;">' . esc_html( $data['message'] ) . '</h1>';
-			echo '<p style="color:#6366f1;">BugSneak: ' . esc_html( $data['file'] ) . ' line ' . (int) $data['line'] . '</p>';
-			echo '</div>';
-		}
-
-		exit();
 	}
 }

@@ -89,8 +89,10 @@ class Schema {
 		];
 
 		foreach ( $columns as $column => $definition ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom schema management
 			$check = $wpdb->get_results( $wpdb->prepare( "SHOW COLUMNS FROM %i LIKE %s", $table_name, $column ) );
 			if ( empty( $check ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for custom schema management
 				$wpdb->query( $wpdb->prepare( "ALTER TABLE %i ADD %i %s", $table_name, $column, $definition ) );
 			}
 		}
@@ -104,12 +106,14 @@ class Schema {
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
 		$required_indexes = [ 'error_hash', 'last_seen', 'created_at', 'error_type', 'share_token' ];
-
+		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for index verification
 		$existing = $wpdb->get_results( $wpdb->prepare( "SHOW INDEX FROM %i", $table_name ), ARRAY_A );
 		$existing_keys = array_unique( array_column( $existing, 'Key_name' ) );
 
 		foreach ( $required_indexes as $index_name ) {
 			if ( ! in_array( $index_name, $existing_keys, true ) ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Required for index verification
 				$wpdb->query( $wpdb->prepare( "ALTER TABLE %i ADD INDEX %i (%i)", $table_name, $index_name, $index_name ) );
 			}
 		}
@@ -125,6 +129,7 @@ class Schema {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom error log management
 		return $wpdb->get_results(
 			$wpdb->prepare( "SELECT * FROM %i ORDER BY last_seen DESC LIMIT %d", $table_name, (int) $limit ),
 			ARRAY_A
@@ -141,6 +146,7 @@ class Schema {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom error log management
 		return $wpdb->get_row(
 			$wpdb->prepare( "SELECT * FROM %i WHERE share_token = %s", $table_name, sanitize_text_field( $token ) ),
 			ARRAY_A
@@ -153,6 +159,7 @@ class Schema {
 	public static function clear_logs() {
 		global $wpdb;
 		$table_name = $wpdb->prefix . self::TABLE_NAME;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log cleanup
 		$wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
 	}
 }

@@ -179,7 +179,8 @@ class RestController {
 		global $wpdb;
 		$id    = (int) $request['id'];
 		$table = $wpdb->prefix . 'bugsneak_logs';
-
+		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom log retrieval
 		$log = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM %i WHERE id = %d", $table, $id ), ARRAY_A );
 
 		if ( ! $log ) {
@@ -211,7 +212,8 @@ class RestController {
 		if ( ! in_array( $status, [ 'open', 'resolved', 'ignored' ], true ) ) {
 			return new \WP_Error( 'invalid_status', 'Invalid status provided.', [ 'status' => 400 ] );
 		}
-
+		
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for custom log status update
 		$updated = $wpdb->update(
 			$table,
 			[ 'status' => $status ],

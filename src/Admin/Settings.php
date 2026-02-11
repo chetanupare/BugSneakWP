@@ -223,8 +223,10 @@ class Settings {
 		global $wpdb;
 		$table = $wpdb->prefix . 'bugsneak_logs';
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log statistics
 		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM %i", $table ) );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for database size calculation
 		$size_bytes = (int) $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT data_length + index_length FROM information_schema.TABLES WHERE table_schema = %s AND table_name = %s",
@@ -233,7 +235,9 @@ class Settings {
 			)
 		);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log range statistics
 		$oldest = $wpdb->get_var( $wpdb->prepare( "SELECT MIN(created_at) FROM %i", $table ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log range statistics
 		$newest = $wpdb->get_var( $wpdb->prepare( "SELECT MAX(last_seen) FROM %i", $table ) );
 
 		return [
@@ -268,6 +272,7 @@ class Settings {
 		$max_rows       = self::get( 'max_rows', 10000 );
 
 		// Delete by age.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log retention management
 		$wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM %i WHERE last_seen < DATE_SUB(NOW(), INTERVAL %d DAY)",
@@ -277,9 +282,11 @@ class Settings {
 		);
 
 		// Prune by row count (keep newest).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log capacity management
 		$total_rows = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM %i", $table ) );
 		if ( $total_rows > $max_rows ) {
 			$to_delete = $total_rows - $max_rows;
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log capacity management
 			$wpdb->query(
 				$wpdb->prepare(
 					"DELETE FROM %i ORDER BY id ASC LIMIT %d",
@@ -298,6 +305,7 @@ class Settings {
 	public static function purge_all() {
 		global $wpdb;
 		$table = $wpdb->prefix . 'bugsneak_logs';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Required for log cleanup
 		return (bool) $wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table ) );
 	}
 }

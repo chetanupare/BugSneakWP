@@ -2,15 +2,15 @@
 
 /* Layout is handled via DashboardController inline styles for maximum WP compatibility */
 
-#wpfooter {
+.bugsneak-admin-page #wpfooter {
     display: none;
 }
 
-/* Hide WordPress UI Clutter */
-.update-nag,
-.updated,
-.error,
-.is-dismissible {
+/* Hide WordPress UI Clutter on BugSneak pages */
+.bugsneak-admin-page .update-nag,
+.bugsneak-admin-page .updated,
+.bugsneak-admin-page .error,
+.bugsneak-admin-page .is-dismissible {
     display: none !important;
 }
 

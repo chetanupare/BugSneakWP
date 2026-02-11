@@ -26,14 +26,14 @@ $bugsneak_severity = $data['severity'] ?? 'Fatal';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BugSneak — <?php echo esc_html( $data['message'] ); ?></title>
-    <!-- phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript -->
-    <!-- phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -->
-    <!-- Inline resources required during fatal error recovery when wp_enqueue is unavailable -->
+    <?php // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
+    <?php // phpcs:disable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet ?>
+    <?php /* Inline resources required during fatal error recovery when wp_enqueue is unavailable */ ?>
     <script src="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/tailwindcss.js' ); ?>"></script>
     <link href="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/inter.css' ); ?>" rel="stylesheet">
     <link href="<?php echo esc_url( BUGSNEAK_URL . 'assets/vendor/material-icons.css' ); ?>" rel="stylesheet">
-    <!-- phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedScript -->
-    <!-- phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet -->
+    <?php // phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedScript ?>
+    <?php // phpcs:enable WordPress.WP.EnqueuedResources.NonEnqueuedStylesheet ?>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { background: #0f172a; color: #f8fafc; font-family: 'Inter', sans-serif; min-height: 100vh; }
