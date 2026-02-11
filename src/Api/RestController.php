@@ -102,7 +102,13 @@ class RestController {
 	public function get_logs() {
 		$logs = \BugSneak\Database\Schema::get_logs( 100 );
 		$logs = array_map( function( $log ) {
-			$log['classification'] = \BugSneak\Intelligence\ErrorPatterns::analyze( $log['error_message'] );
+			$log['classification'] = \BugSneak\Intelligence\ErrorClassifier::classify( $log['error_message'] );
+
+			// Spike Detection (Velocity Check)
+			$duration = strtotime( $log['last_seen'] ) - strtotime( $log['created_at'] );
+			$velocity = $duration > 0 ? ( $log['occurrence_count'] / $duration ) * 60 : 0; // Errors per minute
+			$log['is_spike'] = ( $log['occurrence_count'] > 10 && $velocity > 5 );
+
 			return $log;
 		}, $logs );
 

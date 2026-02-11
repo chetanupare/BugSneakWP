@@ -259,7 +259,7 @@ const Main = ({ activeLog, env, setLogStatus }) => {
         ]),
         el('div', { className: 'flex-1 overflow-auto p-6 custom-scrollbar' }, [
             activeTab === 'stack' && el('div', { className: 'space-y-4' }, [
-                el(ClassificationCard, { classification: activeLog.classification }),
+                el(ClassificationCard, { classification: activeLog.classification, isSpike: activeLog.is_spike }),
                 el('div', { className: `bg-[var(--tl-primary-bg)] border border-[var(--tl-primary-border)] rounded-lg p-4 flex items-start gap-3 transition-all ${aiLoading ? 'animate-pulse' : ''}` }, [
                     el('div', { className: 'shrink-0 p-1.5 bg-[var(--tl-primary-bg)] rounded-lg' }, el('span', { className: 'material-icons text-[var(--tl-primary-light)] text-xl' }, 'auto_fix_high')),
                     el('div', { className: 'flex-1 min-w-0' }, [
@@ -383,8 +383,8 @@ const highlightLine = (c) => {
     });
 };
 
-const ClassificationCard = ({ classification }) => {
-    if (!classification || !classification.category || classification.category === 'Unclassified Error') return null;
+const ClassificationCard = ({ classification, isSpike }) => {
+    if (!classification || !classification.category || classification.category === 'Unclassified') return null;
 
     const colors = {
         'critical': 'border-l-4 border-red-500 bg-red-500/5 text-red-500',
@@ -395,13 +395,33 @@ const ClassificationCard = ({ classification }) => {
     };
 
     const theme = colors[classification.severity] || colors['unknown'];
+    const confidence = classification.confidence || 0;
 
-    return el('div', { className: `rounded-r-lg p-4 mb-2 ${theme}` }, [
-        el('div', { className: 'flex items-center gap-2 mb-1.5' }, [
-            el('span', { className: 'material-icons text-[18px]' }, 'lightbulb'),
-            el('h3', { className: 'text-[11px] font-bold uppercase tracking-wider' }, classification.category)
+    let confidenceBadge = { text: 'Low Confidence', color: 'bg-gray-100 text-gray-500' };
+    if (confidence >= 90) confidenceBadge = { text: 'High Confidence', color: 'bg-green-100 text-green-700' };
+    else if (confidence >= 70) confidenceBadge = { text: 'Medium Confidence', color: 'bg-blue-100 text-blue-700' };
+
+    return el('div', { className: 'mb-4 space-y-2' }, [
+        isSpike && el('div', { className: 'flex items-center gap-2 p-3 bg-red-50 text-red-600 rounded-lg border border-red-200 animate-pulse' }, [
+            el('span', { className: 'material-icons' }, 'local_fire_department'),
+            el('div', null, [
+                el('strong', { className: 'block text-xs uppercase tracking-wider' }, 'Abnormal Spike Detected'),
+                el('span', { className: 'text-xs' }, 'Error rate allows this to be classified as a spike.')
+            ])
         ]),
-        el('p', { className: 'text-[13px] font-medium opacity-90 leading-relaxed' }, classification.suggestion)
+        el('div', { className: `rounded-r-lg p-4 ${theme}` }, [
+            el('div', { className: 'flex items-center justify-between mb-2' }, [
+                el('div', { className: 'flex items-center gap-2' }, [
+                    el('span', { className: 'material-icons text-[18px]' }, 'lightbulb'),
+                    el('h3', { className: 'text-[11px] font-bold uppercase tracking-wider' }, classification.category)
+                ]),
+                el('span', { className: `px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${confidenceBadge.color}` }, confidenceBadge.text)
+            ]),
+            el('div', { className: 'flex flex-wrap gap-1 mb-2' },
+                (classification.tags || []).map(tag => el('span', { key: tag, className: 'px-1.5 py-0.5 bg-white/50 rounded text-[9px] font-mono opacity-70' }, `#${tag}`))
+            ),
+            el('p', { className: 'text-[13px] font-medium opacity-90 leading-relaxed' }, classification.suggestion)
+        ])
     ]);
 };
 
