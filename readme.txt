@@ -1,5 +1,5 @@
 === BugSneak ===
-Contributors: bugsneak
+Contributors: chetanupare
 Tags: debug, error log, stack trace, fatal error, php error
 Requires at least: 6.2
 Tested up to: 6.9

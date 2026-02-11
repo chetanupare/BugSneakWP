@@ -4,8 +4,8 @@
  * Plugin URI:  https://bugsneak.com
  * Description: Crash Intelligence System — intercepts PHP Fatal Errors, Exceptions, and Warnings with beautiful diagnostics.
  * Version:     1.3.5
- * Author:      BugSneak Team
- * Author URI:  https://bugsneak.com
+ * Author:      Chetan Upare
+ * Author URI:  https://github.com/chetanupare/
  * License:     GPLv2 or later
  * Text Domain: bugsneak
  * Domain Path: /languages
